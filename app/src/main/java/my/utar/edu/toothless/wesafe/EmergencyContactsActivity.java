@@ -13,9 +13,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-////This part is made with AI, I don't know what it does, but it fixes a lot of problems.
-////Any attempts at understanding and updating this page results in me auto-fenestrating myself
-///
+
 public class EmergencyContactsActivity extends AppCompatActivity {
 
     private RecyclerView rvContacts;
@@ -53,12 +51,11 @@ public class EmergencyContactsActivity extends AppCompatActivity {
     }
 
     private void loadContacts() {
-        // In a real app, this would load from database or API
-        // For demonstration, adding some sample contacts
-        contactList.add(new EmergencyContact("John Doe", "+1234567890", "Family", true));
-        contactList.add(new EmergencyContact("Jane Smith", "+0987654321", "Friend", false));
-
-        adapter.notifyDataSetChanged();
+        if (contactList.isEmpty()) {
+            contactList.add(new EmergencyContact("John Doe", "+1234567890", "Family", true));
+            contactList.add(new EmergencyContact("Jane Smith", "+0987654321", "Friend", false));
+            adapter.notifyDataSetChanged();
+        }
         updateEmptyView();
     }
 
@@ -75,7 +72,7 @@ public class EmergencyContactsActivity extends AppCompatActivity {
     private void setupClickListeners() {
         fabAddContact.setOnClickListener(v -> {
             Intent intent = new Intent(EmergencyContactsActivity.this, EditEmergencyContactActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, 1); // Use the same request code (1)
         });
     }
 
@@ -90,17 +87,35 @@ public class EmergencyContactsActivity extends AppCompatActivity {
     public void editContact(int position) {
         EmergencyContact contact = contactList.get(position);
         Intent intent = new Intent(this, EditEmergencyContactActivity.class);
-        intent.putExtra("contact", contact); // Assuming EmergencyContact is Parcelable
+        intent.putExtra("contact", contact);
         intent.putExtra("position", position);
-        startActivityForResult(intent, 1);
+        startActivityForResult(intent, 1); // Use the same request code (1)
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            // Refresh the contact list
-            loadContacts();
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            boolean isEdit = data.getBooleanExtra("isEdit", false);
+
+            if (isEdit) {
+                // Handle editing an existing contact
+                int position = data.getIntExtra("position", -1);
+                EmergencyContact updatedContact = data.getParcelableExtra("contact");
+
+                if (position != -1 && updatedContact != null) {
+                    contactList.set(position, updatedContact);
+                    adapter.notifyItemChanged(position);
+                }
+            } else {
+                // Handle adding a new contact (if you implement add functionality)
+                EmergencyContact newContact = data.getParcelableExtra("contact");
+                if (newContact != null) {
+                    contactList.add(newContact);
+                    adapter.notifyItemInserted(contactList.size() - 1);
+                    updateEmptyView();
+                }
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package my.utar.edu.toothless.wesafe;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -121,10 +122,19 @@ public class EditEmergencyContactActivity extends AppCompatActivity {
         EmergencyContact contact = new EmergencyContact(name, phone, email, type,
                 isPrimary, receivesAlerts, receivesLocation);
 
-        // Save to database (implementation would go here)
+        // Return the edited contact to the calling activity
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("contact", contact);
 
-        // Return to previous activity
-        setResult(RESULT_OK);
+        // If editing, also send back the position
+        if (isEditMode) {
+            resultIntent.putExtra("position", editPosition);
+            resultIntent.putExtra("isEdit", true);
+        } else {
+            resultIntent.putExtra("isEdit", false);
+        }
+
+        setResult(RESULT_OK, resultIntent);
         finish();
     }
 
@@ -140,9 +150,6 @@ public class EditEmergencyContactActivity extends AppCompatActivity {
             etPhone.setError("Phone number is required");
             isValid = false;
         }
-
-        // Additional validation for phone format and email format could be added
-
         return isValid;
     }
 
