@@ -169,10 +169,59 @@ public class EditEmergencyContactActivity extends AppCompatActivity {
         hideStatusBar(); // Re-hide status bar when activity resumes
     }
 
+    private boolean hasUnsavedChanges() {
+        String name = etName.getText().toString().trim();
+        String phone = etPhone.getText().toString().trim();
+        String email = etEmail.getText().toString().trim();
+        String type = spinnerType.getSelectedItem().toString();
+        boolean isPrimary = switchPrimary.isChecked();
+        boolean receivesAlerts = switchReceiveAlerts.isChecked();
+        boolean receivesLocation = switchReceiveLocationUpdates.isChecked();
+
+        if (isEditMode && contactToEdit != null) {
+            // Check if any field has changed
+            return !name.equals(contactToEdit.getName()) ||
+                   !phone.equals(contactToEdit.getPhone()) ||
+                   !email.equals(contactToEdit.getEmail()) ||
+                   !type.equals(contactToEdit.getType()) ||
+                   isPrimary != contactToEdit.isPrimary() ||
+                   receivesAlerts != contactToEdit.receivesAlerts() ||
+                   receivesLocation != contactToEdit.receivesLocationUpdates();
+        } else {
+            // For new contact, check if any field has been filled
+            return !name.isEmpty() || !phone.isEmpty() || !email.isEmpty();
+        }
+    }
+
+    private void showDiscardDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Discard Changes")
+                .setMessage("You have unsaved changes. Are you sure you want to discard them?")
+                .setPositiveButton("Discard", (dialog, which) -> {
+                    setResult(RESULT_CANCELED);
+                    finish();
+                })
+                .setNegativeButton("Keep Editing", null)
+                .show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (hasUnsavedChanges()) {
+            showDiscardDialog();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+            if (hasUnsavedChanges()) {
+                showDiscardDialog();
+            } else {
+                onBackPressed();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);

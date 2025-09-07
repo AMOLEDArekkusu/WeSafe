@@ -4,11 +4,16 @@ import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -55,6 +60,8 @@ public class IncidentReportActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 123;
     private boolean cameraPermissionGranted = false;
     private boolean storagePermissionGranted = false;
+    private FusedLocationProviderClient fusedLocationClient;
+    private IncidentStorage incidentStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +79,13 @@ public class IncidentReportActivity extends AppCompatActivity {
         setupMediaRecyclerView();
         setupClickListeners();
         checkAndRequestPermissions();
+        
+        // Initialize incident storage
+        incidentStorage = new IncidentStorage(this);
+
+        // Initialize location services
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        getCurrentLocation();
     }
 
     private void initializeViews() {
@@ -276,6 +290,12 @@ public class IncidentReportActivity extends AppCompatActivity {
         Incident incident = new Incident(title, description, address, type, severity, mediaUris);
 
         // Submit to server/database (implementation would go here)
+        
+        // Increment incident count
+        incidentStorage.incrementIncidentCount();
+
+        // Show success message
+        Toast.makeText(this, "Incident report submitted successfully", Toast.LENGTH_SHORT).show();
 
         // Return to previous activity
         setResult(RESULT_OK);
@@ -313,34 +333,52 @@ public class IncidentReportActivity extends AppCompatActivity {
     }
 
     private void checkAndRequestPermissions() {
+        List<String> permissions = new ArrayList<>();
+
+        // Check location permission
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+
+        // Check camera and storage permissions based on Android version
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // For Android 13 and above
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CODE);
+                permissions.add(Manifest.permission.CAMERA);
             } else {
                 cameraPermissionGranted = true;
             }
             
             if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_MEDIA_IMAGES}, PERMISSION_REQUEST_CODE);
+                permissions.add(Manifest.permission.READ_MEDIA_IMAGES);
             } else {
                 storagePermissionGranted = true;
             }
         } else {
             // For Android 12 and below
-            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                
-                requestPermissions(new String[]{
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                }, PERMISSION_REQUEST_CODE);
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.CAMERA);
             } else {
                 cameraPermissionGranted = true;
+            }
+            
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 storagePermissionGranted = true;
             }
+        }
+
+        // Request all needed permissions at once
+        if (!permissions.isEmpty()) {
+            requestPermissions(permissions.toArray(new String[0]), PERMISSION_REQUEST_CODE);
         }
     }
 
@@ -356,6 +394,69 @@ public class IncidentReportActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         hideStatusBar(); // Re-hide status bar when activity resumes
+        getCurrentLocation(); // Refresh location when activity resumes
+    }
+
+    private void getCurrentLocation() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, location -> {
+                    if (location != null) {
+                        // Get the address from the location
+                        getAddressFromLocation(location);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Could not get location", Toast.LENGTH_SHORT).show();
+                });
+        }
+    }
+
+    private void getAddressFromLocation(Location location) {
+        try {
+            Geocoder geocoder = new Geocoder(this, java.util.Locale.getDefault());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // Use the new geocoder API for Android 13 and above
+                geocoder.getFromLocation(
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    1,
+                    addresses -> {
+                        if (!addresses.isEmpty()) {
+                            updateAddressField(addresses.get(0));
+                        }
+                    }
+                );
+            } else {
+                // Use the old geocoder API for older versions
+                List<Address> addresses = geocoder.getFromLocation(
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    1
+                );
+                if (!addresses.isEmpty()) {
+                    updateAddressField(addresses.get(0));
+                }
+            }
+        } catch (IOException e) {
+            // Fallback to coordinates if geocoding fails
+            String coordinates = String.format(
+                Locale.getDefault(),
+                "%.6f, %.6f",
+                location.getLatitude(),
+                location.getLongitude()
+            );
+            etAddress.setText(coordinates);
+        }
+    }
+
+    private void updateAddressField(Address address) {
+        StringBuilder addressText = new StringBuilder();
+        for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+            if (i > 0) addressText.append(", ");
+            addressText.append(address.getAddressLine(i));
+        }
+        runOnUiThread(() -> etAddress.setText(addressText.toString()));
     }
 
     @Override

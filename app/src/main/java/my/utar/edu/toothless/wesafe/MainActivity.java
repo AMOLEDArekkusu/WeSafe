@@ -4,12 +4,20 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
+import android.view.Window;
+import android.view.WindowManager;
+import androidx.appcompat.widget.Toolbar;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,9 +26,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -50,28 +60,54 @@ public class MainActivity extends AppCompatActivity {
 
     // UI Components
     private TextView tvWelcome, tvLocationStatus, tvWeatherInfo, tvIncidentCount, tvLastUpdate;
-    private Button btnViewMap, btnReportIncident, btnEmergencyContacts, btnSettings;
     private FloatingActionButton fabPanicButton;
-    private CardView cardQuickActions;
+    private MaterialButton btnViewMap, btnReportIncident, btnEmergencyContacts, btnSettings;
+    
+    private IncidentStorage incidentStorage;
 
-    // Location Components
+    // Location and Weather Components
     private FusedLocationProviderClient fusedLocationClient;
     private boolean locationPermissionGranted = false;
+    private WeatherManager weatherManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hideStatusBar();
+        
+        // Set theme and layout
+        setTheme(R.style.Theme_WeSafe);
         setContentView(R.layout.activity_main);
-
+        
         // Initialize toolbar
-        setSupportActionBar(findViewById(R.id.toolbar));
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("WeSafe");
+        }
 
         // Initialize UI components
         initializeViews();
+        setupClickListeners();
+
+        // Initialize incident storage
+        incidentStorage = new IncidentStorage(this);
 
         // Initialize location services
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Initialize weather manager
+        weatherManager = new WeatherManager();
+        weatherManager.setListener(new WeatherManager.WeatherUpdateListener() {
+            @Override
+            public void onWeatherUpdated(double tempCelsius, String condition) {
+                updateWeatherUI(tempCelsius, condition);
+            }
+
+            @Override
+            public void onWeatherError(String error) {
+                Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Check and request permissions
         checkAndRequestPermissions();
@@ -87,50 +123,32 @@ public class MainActivity extends AppCompatActivity {
      * Initialize all view components from the layout
      */
     private void initializeViews() {
+        // Initialize text views
         tvWelcome = findViewById(R.id.tv_welcome);
         tvLocationStatus = findViewById(R.id.tv_location_status);
         tvWeatherInfo = findViewById(R.id.tv_weather_info);
         tvIncidentCount = findViewById(R.id.tv_incident_count);
         tvLastUpdate = findViewById(R.id.tv_last_update);
-
+        
+        // Initialize buttons
+        fabPanicButton = findViewById(R.id.fab_panic_button);
         btnViewMap = findViewById(R.id.btn_view_map);
         btnReportIncident = findViewById(R.id.btn_report_incident);
         btnEmergencyContacts = findViewById(R.id.btn_emergency_contacts);
         btnSettings = findViewById(R.id.btn_settings);
-
-        fabPanicButton = findViewById(R.id.fab_panic_button);
-        cardQuickActions = findViewById(R.id.card_quick_actions);
+        
+        // Set up click listeners
+        setupClickListeners();
     }
 
-    /**
-     * Set up click listeners for all interactive elements
-     */
     private void setupClickListeners() {
-        // Map button - opens MapActivity
-        btnViewMap.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, MapActivity.class);
-            startActivity(intent);
-        });
-
-        // Report incident button - opens IncidentReportActivity
-        btnReportIncident.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, IncidentReportActivity.class);
-            startActivity(intent);
-        });
-
-        // Emergency contacts button - opens EmergencyContactsActivity
-        btnEmergencyContacts.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, EmergencyContactsActivity.class);
-            startActivity(intent);
-        });
-
-        // Settings button - opens SettingsActivity
-        btnSettings.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(intent);
-        });
-
-        // Panic button - triggers emergency actions
+        // Set up click listeners for quick action buttons
+        btnViewMap.setOnClickListener(v -> startActivity(new Intent(this, MapActivity.class)));
+        btnReportIncident.setOnClickListener(v -> startActivity(new Intent(this, IncidentReportActivity.class)));
+        btnEmergencyContacts.setOnClickListener(v -> startActivity(new Intent(this, EmergencyContactsActivity.class)));
+        btnSettings.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
+        
+        // Panic button click listener
         fabPanicButton.setOnClickListener(v -> triggerEmergencyProtocol());
     }
 
@@ -142,13 +160,15 @@ public class MainActivity extends AppCompatActivity {
         // For now, we'll set placeholder text
 
         // Update location status (this would use Location Services in a real implementation)
-        tvLocationStatus.setText("📍 Location: San Francisco, CA");
+        tvLocationStatus.setText("📍 San Francisco, CA");
 
         // Update weather info (this would use a weather API in a real implementation)
-        tvWeatherInfo.setText("🌤️ Weather: 72°F, Clear");
+        tvWeatherInfo.setText("🌤️ 23.5°C");
 
-        // Update incident count (this would come from your database/API)
-        tvIncidentCount.setText("📊 Nearby Incidents: 3 reported today");
+        // Update incident count from storage
+        int todayCount = incidentStorage.getTodayCount();
+        int totalCount = incidentStorage.getTotalCount();
+        tvIncidentCount.setText(String.format("📊 Incidents: %d today, %d total", todayCount, totalCount));
 
         // Update last updated time
         tvLastUpdate.setText("Last updated: " + java.text.DateFormat.getDateTimeInstance().format(new java.util.Date()));
@@ -380,8 +400,69 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateLocationUI(Location location) {
         if (location != null) {
-            tvLocationStatus.setText(String.format("📍 Location: %.6f, %.6f",
+            // Update location display with coordinates
+            tvLocationStatus.setText(String.format("📍 %.6f, %.6f",
                     location.getLatitude(), location.getLongitude()));
+            
+            // Start weather updates when we get a location
+            weatherManager.startUpdates(location);
+
+            // Get address from coordinates (geocoding)
+            getAddressFromLocation(location);
+        }
+    }
+
+    private void getAddressFromLocation(Location location) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            geocoder.getFromLocation(
+                location.getLatitude(),
+                location.getLongitude(),
+                1,
+                addresses -> {
+                    if (!addresses.isEmpty()) {
+                        String address = addresses.get(0).getLocality() + ", " + 
+                                       addresses.get(0).getAdminArea();
+                        tvLocationStatus.setText("📍 " + address);
+                    }
+                }
+            );
+        } else {
+            try {
+                List<Address> addresses = geocoder.getFromLocation(
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    1
+                );
+                if (!addresses.isEmpty()) {
+                    String address = addresses.get(0).getLocality() + ", " + 
+                                   addresses.get(0).getAdminArea();
+                    tvLocationStatus.setText("📍 " + address);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void updateWeatherUI(double tempCelsius, String condition) {
+        String weatherEmoji = getWeatherEmoji(condition);
+        tvWeatherInfo.setText(String.format("%s %.1f°C", weatherEmoji, tempCelsius));
+        tvLastUpdate.setText("Last updated: " + java.text.DateFormat.getDateTimeInstance().format(new java.util.Date()));
+    }
+
+    private String getWeatherEmoji(String condition) {
+        switch (condition.toLowerCase()) {
+            case "clear": return "☀️";
+            case "clouds": return "☁️";
+            case "rain": return "🌧️";
+            case "drizzle": return "🌦️";
+            case "thunderstorm": return "⛈️";
+            case "snow": return "🌨️";
+            case "mist":
+            case "fog":
+            case "haze": return "🌫️";
+            default: return "🌤️";
         }
     }
 
@@ -396,20 +477,45 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+    private void setupStatusBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getColor(R.color.colorPrimary));
+            
+            // Make status bar icons dark if we're using a light theme
+            View decorView = window.getDecorView();
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
+    }
+
     private void hideStatusBar() {
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
                      | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        hideStatusBar(); // Re-hide the status bar when activity resumes
         if (!hasLocationPermissions()) {
             showLocationRequiredSnackbar();
+        } else {
+            initializeLocationUpdates(); // Refresh location and weather
         }
+        // Refresh incident counts
+        int todayCount = incidentStorage.getTodayCount();
+        int totalCount = incidentStorage.getTotalCount();
+        tvIncidentCount.setText(String.format("📊 Incidents: %d today, %d total", todayCount, totalCount));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Stop weather updates when activity is not visible
+        weatherManager.stopUpdates();
     }
 }

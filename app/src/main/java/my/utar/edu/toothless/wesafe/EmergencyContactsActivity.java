@@ -40,6 +40,7 @@ public class EmergencyContactsActivity extends AppCompatActivity {
     private FloatingActionButton fabAddContact;
     private EmergencyContactAdapter adapter;
     private List<EmergencyContact> contactList = new ArrayList<>();
+    private ContactStorage contactStorage;
     
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
@@ -57,6 +58,7 @@ public class EmergencyContactsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        contactStorage = new ContactStorage(this);
         initializeViews();
         setupRecyclerView();
         loadContacts();
@@ -81,11 +83,9 @@ public class EmergencyContactsActivity extends AppCompatActivity {
     }
 
     private void loadContacts() {
-        if (contactList.isEmpty()) {
-            contactList.add(new EmergencyContact("John Doe", "+1234567890", "Family", true));
-            contactList.add(new EmergencyContact("Jane Smith", "+0987654321", "Friend", false));
-            adapter.notifyDataSetChanged();
-        }
+        contactList.clear();
+        contactList.addAll(contactStorage.loadContacts());
+        adapter.notifyDataSetChanged();
         updateEmptyView();
     }
 
@@ -109,6 +109,7 @@ public class EmergencyContactsActivity extends AppCompatActivity {
     // Method to handle contact deletion
     public void deleteContact(int position) {
         contactList.remove(position);
+        contactStorage.deleteContact(position);
         adapter.notifyItemRemoved(position);
         updateEmptyView();
     }
@@ -125,6 +126,13 @@ public class EmergencyContactsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        
+        // Load contacts from storage whether the edit was successful or canceled
+        if (requestCode == 1) {
+            // Refresh contacts from storage
+            loadContacts();
+        }
+        
         if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
             boolean isEdit = data.getBooleanExtra("isEdit", false);
 
@@ -135,13 +143,15 @@ public class EmergencyContactsActivity extends AppCompatActivity {
 
                 if (position != -1 && updatedContact != null) {
                     contactList.set(position, updatedContact);
+                    contactStorage.updateContact(position, updatedContact);
                     adapter.notifyItemChanged(position);
                 }
             } else {
-                // Handle adding a new contact (if you implement add functionality)
+                // Handle adding a new contact
                 EmergencyContact newContact = data.getParcelableExtra("contact");
                 if (newContact != null) {
                     contactList.add(newContact);
+                    contactStorage.addContact(newContact);
                     adapter.notifyItemInserted(contactList.size() - 1);
                     updateEmptyView();
                 }
