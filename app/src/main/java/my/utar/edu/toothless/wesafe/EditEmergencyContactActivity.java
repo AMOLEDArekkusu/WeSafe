@@ -3,6 +3,7 @@ package my.utar.edu.toothless.wesafe;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -29,6 +30,7 @@ public class EditEmergencyContactActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideStatusBar();
         setContentView(R.layout.activity_edit_emergency_contact);
 
         setSupportActionBar(findViewById(R.id.toolbar));
@@ -151,6 +153,20 @@ public class EditEmergencyContactActivity extends AppCompatActivity {
             isValid = false;
         }
         return isValid;
+    }
+
+    private void hideStatusBar() {
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
+                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hideStatusBar(); // Re-hide status bar when activity resumes
     }
 
     @Override

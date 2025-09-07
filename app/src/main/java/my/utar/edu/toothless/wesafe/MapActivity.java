@@ -3,6 +3,7 @@ package my.utar.edu.toothless.wesafe;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,10 +19,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private FloatingActionButton fabReportIncident, fabMyLocation;
+    private SupportMapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideStatusBar();
         setContentView(R.layout.activity_map);
 
         setSupportActionBar(findViewById(R.id.toolbar));
@@ -41,7 +44,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void setupMap() {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
@@ -74,6 +77,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(false); // Using our own FAB
+        
+        // Add padding to prevent controls from overlapping with FABs
+        // Left padding for zoom controls, bottom padding for FABs
+        mMap.setPadding(16, 0, 160, 250);
+        
+        // Move zoom controls to bottom-left
+        if (mapFragment != null && mapFragment.getView() != null) {
+            View zoomControls = mapFragment.getView().findViewById(0x1);
+            if (zoomControls != null) {
+                zoomControls.setVisibility(View.VISIBLE);
+                zoomControls.setLayoutParams(new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.WRAP_CONTENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT));
+            }
+        }
 
         // Add a sample marker (in real app, this would load from database/API)
         LatLng sampleIncident = new LatLng(37.7749, -122.4194);
@@ -101,6 +119,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         args.putString("snippet", snippet);
         dialog.setArguments(args);
         dialog.show(getSupportFragmentManager(), "IncidentDetailDialog");
+    }
+
+    private void hideStatusBar() {
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
+                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hideStatusBar(); // Re-hide status bar when activity resumes
     }
 
     @Override

@@ -1,15 +1,31 @@
 package my.utar.edu.toothless.wesafe;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 /**
  * Main activity of the WeSafe app - serves as the home/dashboard screen
@@ -17,15 +33,29 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
  */
 public class MainActivity extends AppCompatActivity {
 
+    private static final int PERMISSION_REQUEST_CODE = 123;
+    private static final String[] REQUIRED_PERMISSIONS = {
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    };
+    private static final String[] BACKGROUND_LOCATION = {
+        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+    };
+
     // UI Components
     private TextView tvWelcome, tvLocationStatus, tvWeatherInfo, tvIncidentCount, tvLastUpdate;
     private Button btnViewMap, btnReportIncident, btnEmergencyContacts, btnSettings;
     private FloatingActionButton fabPanicButton;
     private CardView cardQuickActions;
 
+    // Location Components
+    private FusedLocationProviderClient fusedLocationClient;
+    private boolean locationPermissionGranted = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideStatusBar();
         setContentView(R.layout.activity_main);
 
         // Initialize toolbar
@@ -33,6 +63,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize UI components
         initializeViews();
+
+        // Initialize location services
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Check and request permissions
+        checkAndRequestPermissions();
 
         // Set up click listeners
         setupClickListeners();
@@ -117,17 +153,200 @@ public class MainActivity extends AppCompatActivity {
      * This would alert emergency contacts and potentially authorities
      */
     private void triggerEmergencyProtocol() {
-        // I want to kill myself
+        if (!locationPermissionGranted) {
+            showLocationNeededDialog();
+            return;
+        }
 
-        // For now, it just shows a confirmation dialog
-        new android.app.AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setTitle("Emergency Alert")
                 .setMessage("Are you sure you want to trigger an emergency alert? This will notify your emergency contacts and share your location.")
                 .setPositiveButton("Yes, Alert Contacts", (dialog, which) -> {
-                    // Implement emergency alert functionality
-                    // sendEmergencyAlerts();
+                    // Get current location and send alert
+                    getCurrentLocationAndAlert();
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void checkAndRequestPermissions() {
+        if (!hasLocationPermissions()) {
+            showLocationPermissionRationale();
+        } else {
+            locationPermissionGranted = true;
+            // Check for background location if needed
+            checkBackgroundLocationPermission();
+            // Initialize location updates
+            initializeLocationUpdates();
+        }
+    }
+
+    private boolean hasLocationPermissions() {
+        for (String permission : REQUIRED_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void showLocationPermissionRationale() {
+        new AlertDialog.Builder(this)
+                .setTitle("Location Permission Required")
+                .setMessage("WeSafe needs location permission to:\n\n" +
+                          "• Send your location to emergency contacts\n" +
+                          "• Show nearby incidents on the map\n" +
+                          "• Provide accurate emergency response\n\n" +
+                          "Please grant location permission to use these safety features.")
+                .setPositiveButton("Grant Permission", (dialog, which) -> {
+                    requestLocationPermissions();
+                })
+                .setNegativeButton("Not Now", (dialog, which) -> {
+                    showLocationRequiredSnackbar();
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    private void requestLocationPermissions() {
+        ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSION_REQUEST_CODE);
+    }
+
+    private void checkBackgroundLocationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            // Check if we've shown the dialog before
+            SharedPreferences prefs = getSharedPreferences("WeSafePrefs", MODE_PRIVATE);
+            boolean hasShownLocationDialog = prefs.getBoolean("hasShownBackgroundLocationDialog", false);
+
+            if (!hasShownLocationDialog && 
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                
+                new AlertDialog.Builder(this)
+                        .setTitle("Background Location Access")
+                        .setMessage("To provide emergency assistance even when the app is closed, " +
+                                  "please allow WeSafe to access your location all the time.")
+                        .setPositiveButton("Grant Permission", (dialog, which) -> {
+                            ActivityCompat.requestPermissions(this, BACKGROUND_LOCATION,
+                                    PERMISSION_REQUEST_CODE + 1);
+                            // Mark that we've shown the dialog
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean("hasShownBackgroundLocationDialog", true);
+                            editor.apply();
+                        })
+                        .setNegativeButton("Not Now", (dialog, which) -> {
+                            // Mark that we've shown the dialog even if user declines
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean("hasShownBackgroundLocationDialog", true);
+                            editor.apply();
+                        })
+                        .setCancelable(false)
+                        .show();
+            }
+        }
+    }
+
+    private void showLocationRequiredSnackbar() {
+        Snackbar.make(findViewById(android.R.id.content),
+                "Location permission is required for safety features",
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction("Settings", v -> {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                })
+                .show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                         @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            boolean allGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+
+            if (allGranted) {
+                locationPermissionGranted = true;
+                checkBackgroundLocationPermission();
+                initializeLocationUpdates();
+            } else {
+                showLocationRequiredSnackbar();
+            }
+        }
+    }
+
+    private void initializeLocationUpdates() {
+        if (locationPermissionGranted) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                fusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(this, location -> {
+                            if (location != null) {
+                                updateLocationUI(location);
+                            }
+                        });
+            }
+        }
+    }
+
+    private void getCurrentLocationAndAlert() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, location -> {
+                        if (location != null) {
+                            // TODO: Implement emergency alert sending
+                            Toast.makeText(this, "Emergency alert sent with location: " +
+                                    location.getLatitude() + ", " + location.getLongitude(),
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(this, "Unable to get current location",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
+
+    private void updateLocationUI(Location location) {
+        if (location != null) {
+            tvLocationStatus.setText(String.format("📍 Location: %.6f, %.6f",
+                    location.getLatitude(), location.getLongitude()));
+        }
+    }
+
+    private void showLocationNeededDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Location Required")
+                .setMessage("Location permission is required to send your location during emergencies. Please enable location permissions to use this feature.")
+                .setPositiveButton("Enable", (dialog, which) -> {
+                    checkAndRequestPermissions();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void hideStatusBar() {
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
+                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hideStatusBar(); // Re-hide the status bar when activity resumes
+        if (!hasLocationPermissions()) {
+            showLocationRequiredSnackbar();
+        }
     }
 }

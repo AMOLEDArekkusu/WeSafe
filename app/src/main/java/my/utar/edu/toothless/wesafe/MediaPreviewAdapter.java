@@ -1,12 +1,13 @@
 package my.utar.edu.toothless.wesafe;
 
 import android.content.Context;
-import android.content.Intent; // Added Intent import
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.provider.MediaStore; // Added MediaStore import
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +15,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
-
-// Removed: import com.bumptech.glide.Glide; // No longer using Glide
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Adapter for displaying media previews in a horizontal RecyclerView
@@ -31,8 +33,12 @@ public class MediaPreviewAdapter extends RecyclerView.Adapter<MediaPreviewAdapte
 
     private List<Uri> mediaUris;
     private Context context;
+    private final ExecutorService executorService;
+    private final Handler mainHandler;
 
     public MediaPreviewAdapter(List<Uri> mediaUris, Context context) {
+        this.executorService = Executors.newFixedThreadPool(2);
+        this.mainHandler = new Handler(Looper.getMainLooper());
         this.mediaUris = mediaUris;
         this.context = context;
     }
@@ -47,18 +53,20 @@ public class MediaPreviewAdapter extends RecyclerView.Adapter<MediaPreviewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        if (position < 0 || position >= mediaUris.size()) {
+            return;
+        }
+
         Uri mediaUri = mediaUris.get(position);
+        if (mediaUri == null) {
+            return;
+        }
 
-        // Load image directly without Glide
-        // This is a simplified example. For production apps, consider:
-        // - Offloading image loading to a background thread (e.g., using AsyncTask or Kotlin Coroutines)
-        // - Implementing image caching
-        // - Handling different image types and potential errors more robustly
-        // - Resizing images to fit the ImageView to save memory
-
-        // Example using AsyncTask to load image in the background
-        new LoadImageTask(holder.ivPreview, context).execute(mediaUri);
-
+        // Clear any existing image and set a placeholder
+        holder.ivPreview.setImageResource(android.R.drawable.ic_menu_gallery);
+        
+        // Load the image using our loadImage method
+        loadImage(mediaUri, holder.ivPreview);
 
         // Set up click listener for the preview image
         holder.ivPreview.setOnClickListener(v -> {
@@ -105,66 +113,95 @@ public class MediaPreviewAdapter extends RecyclerView.Adapter<MediaPreviewAdapte
         }
     }
 
-    // AsyncTask to load images in the background
-    private static class LoadImageTask extends AsyncTask<Uri, Void, Bitmap> {
-        private final WeakReference<ImageView> imageViewReference;
-        private final WeakReference<Context> contextReference;
-
-        public LoadImageTask(ImageView imageView, Context context) {
-            // Use a WeakReference to ensure the ImageView can be garbage collected
-            imageViewReference = new WeakReference<>(imageView);
-            contextReference = new WeakReference<>(context);
+    private void loadImage(Uri uri, ImageView imageView) {
+        if (uri == null || imageView == null) {
+            return;
         }
 
-        @Override
-        protected Bitmap doInBackground(Uri... params) {
-            Uri uri = params[0];
-            Context context = contextReference.get();
-            if (context == null || uri == null) {
-                return null;
-            }
+        // Keep a weak reference to prevent memory leaks
+        final WeakReference<ImageView> imageViewRef = new WeakReference<>(imageView);
+
+        executorService.execute(() -> {
+            Bitmap bitmap = null;
+            InputStream inputStream = null;
 
             try {
-                // For content URIs (e.g., from gallery or file picker)
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+
+                // First decode with inJustDecodeBounds=true to check dimensions
                 if ("content".equals(uri.getScheme())) {
-                    InputStream inputStream = context.getContentResolver().openInputStream(uri);
+                    inputStream = context.getContentResolver().openInputStream(uri);
                     if (inputStream != null) {
-                        // Decode the bitmap, you might want to add options for sampling
-                        // to reduce memory usage for large images.
-                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        BitmapFactory.decodeStream(inputStream, null, options);
                         inputStream.close();
-                        return bitmap;
                     }
-                } else if ("file".equals(uri.getScheme())) { // For file URIs
-                    // Decode the bitmap directly from the file path.
-                    // Be cautious with direct file paths, ensure you have permissions.
-                    Bitmap bitmap = BitmapFactory.decodeFile(uri.getPath());
-                    return bitmap;
+                } else if ("file".equals(uri.getScheme())) {
+                    BitmapFactory.decodeFile(uri.getPath(), options);
                 }
-                // Add handling for other URI schemes if necessary (e.g., http, https)
-            } catch (FileNotFoundException e) {
-                e.printStackTrace(); // Log error
-            } catch (IOException e) {
-                e.printStackTrace(); // Log error
+
+                // Calculate inSampleSize
+                options.inSampleSize = calculateInSampleSize(options, 1024, 1024);
+                options.inJustDecodeBounds = false;
+
+                // Decode bitmap with inSampleSize set
+                if ("content".equals(uri.getScheme())) {
+                    inputStream = context.getContentResolver().openInputStream(uri);
+                    if (inputStream != null) {
+                        bitmap = BitmapFactory.decodeStream(inputStream, null, options);
+                    }
+                } else if ("file".equals(uri.getScheme())) {
+                    bitmap = BitmapFactory.decodeFile(uri.getPath(), options);
+                }
+
             } catch (SecurityException e) {
-                e.printStackTrace(); // Log error, e.g., if you don't have permission to read the URI
+                // Handle permission denied
+                e.printStackTrace();
+            } catch (IOException e) {
+                // Handle I/O errors
+                e.printStackTrace();
+            } catch (OutOfMemoryError e) {
+                // Handle out of memory
+                e.printStackTrace();
+            } finally {
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-            return null;
+
+            final Bitmap finalBitmap = bitmap;
+            mainHandler.post(() -> {
+                ImageView iv = imageViewRef.get();
+                if (iv != null) {
+                    if (finalBitmap != null) {
+                        iv.setImageBitmap(finalBitmap);
+                    } else {
+                        // Set a placeholder for failed loads
+                        iv.setImageResource(android.R.drawable.ic_dialog_alert);
+                    }
+                }
+            });
+        });
+    }
+
+    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
         }
 
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if (isCancelled()) {
-                bitmap = null; // Ensure bitmap is null if task is cancelled
-            }
-
-            ImageView imageView = imageViewReference.get();
-            if (imageView != null && bitmap != null) {
-                imageView.setImageBitmap(bitmap);
-            } else if (imageView != null) {
-                // Optionally set a placeholder if the bitmap is null (e.g., loading failed)
-                // imageView.setImageResource(R.drawable.placeholder_image);
-            }
-        }
+        return inSampleSize;
     }
 }

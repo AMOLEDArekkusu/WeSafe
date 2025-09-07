@@ -1,6 +1,7 @@
 package my.utar.edu.toothless.wesafe;
 
 import android.os.Bundle;
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -15,6 +16,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideStatusBar();
         setContentView(R.layout.activity_settings);
 
         setSupportActionBar(findViewById(R.id.toolbar));
@@ -60,6 +62,20 @@ public class SettingsActivity extends AppCompatActivity {
             // Add more preferences as needed in a similar way
             // For example, EditTextPreference, ListPreference, etc.
         }
+    }
+
+    private void hideStatusBar() {
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
+                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hideStatusBar(); // Re-hide status bar when activity resumes
     }
 
     @Override
