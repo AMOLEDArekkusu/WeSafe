@@ -36,10 +36,16 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 123;
     private static final String[] REQUIRED_PERMISSIONS = {
         Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.CAMERA
     };
     private static final String[] BACKGROUND_LOCATION = {
         Manifest.permission.ACCESS_BACKGROUND_LOCATION
+    };
+    private static final String[] STORAGE_PERMISSIONS = {
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_MEDIA_IMAGES
     };
 
     // UI Components
@@ -179,6 +185,17 @@ public class MainActivity extends AppCompatActivity {
             // Initialize location updates
             initializeLocationUpdates();
         }
+
+        // Check camera permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    PERMISSION_REQUEST_CODE + 1);
+        }
+
+        // Check storage permissions
+        checkStoragePermissions();
     }
 
     private boolean hasLocationPermissions() {
@@ -210,6 +227,31 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestLocationPermissions() {
         ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSION_REQUEST_CODE);
+    }
+
+    private void checkStoragePermissions() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            // For Android 13 and above, only need READ_MEDIA_IMAGES
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_MEDIA_IMAGES},
+                        PERMISSION_REQUEST_CODE + 2);
+            }
+        } else {
+            // For Android 12 and below
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        },
+                        PERMISSION_REQUEST_CODE + 2);
+            }
+        }
     }
 
     private void checkBackgroundLocationPermission() {
@@ -279,6 +321,27 @@ public class MainActivity extends AppCompatActivity {
                 initializeLocationUpdates();
             } else {
                 showLocationRequiredSnackbar();
+            }
+        } else if (requestCode == PERMISSION_REQUEST_CODE + 2) {
+            boolean allGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+
+            if (!allGranted) {
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Storage permission is required for uploading images",
+                        Snackbar.LENGTH_LONG)
+                        .setAction("Settings", v -> {
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                        })
+                        .show();
             }
         }
     }
