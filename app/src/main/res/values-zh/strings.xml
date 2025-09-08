@@ -118,4 +118,11 @@
     <string name="about_app_title">关于应用</string>
     <string name="enable_notifications_desc">接收安全警报和通知</string>
     <string name="version">版本</string>
+
+    <!-- About Screen -->
+    <string name="about_app_description">WeSafe 是一个全面的安全和应急响应应用程序，旨在帮助您保持安全并与紧急联系人保持联系。</string>
+    <string name="key_features">主要功能：</string>
+    <string name="features_list">• 快速紧急警报\n• 位置追踪\n• 紧急联系人管理\n• 事件报告\n• 多语言支持\n• 实时天气更新\n• 安全提示和指导</string>
+    <string name="contact_info">GitHub 仓库：\nhttps://github.com/AMOLEDArekkusu/WeSafe</string>
+    <string name="copyright">© 2025 WeSafe。保留所有权利。</string>
 </resources>

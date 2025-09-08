@@ -79,9 +79,10 @@ public class SettingsActivity extends BaseActivity {
             aboutPreference.setTitle(getString(R.string.about_app_title));
             aboutPreference.setSummary(getString(R.string.about_summary));
 
-            // You can set an OnPreferenceClickListener for this preference
+            // Launch AboutActivity when clicked
             aboutPreference.setOnPreferenceClickListener(preference -> {
-                // Handle click, e.g., show a dialog
+                Intent intent = new Intent(requireContext(), AboutActivity.class);
+                startActivity(intent);
                 return true;
             });
             preferenceScreen.addPreference(aboutPreference);

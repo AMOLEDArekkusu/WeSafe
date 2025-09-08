@@ -118,4 +118,11 @@
     <string name="about_app_title">Mengenai Aplikasi</string>
     <string name="enable_notifications_desc">Terima amaran dan pemberitahuan keselamatan</string>
     <string name="version">Versi</string>
+
+    <!-- About Screen -->
+    <string name="about_app_description">WeSafe adalah aplikasi keselamatan dan tindak balas kecemasan yang komprehensif yang direka untuk membantu anda kekal selamat dan berhubung dengan kenalan kecemasan anda.</string>
+    <string name="key_features">Ciri-ciri Utama:</string>
+    <string name="features_list">• Amaran Kecemasan Segera\n• Penjejakan Lokasi\n• Pengurusan Kenalan Kecemasan\n• Pelaporan Insiden\n• Sokongan Pelbagai Bahasa\n• Kemas Kini Cuaca Masa Nyata\n• Petua dan Panduan Keselamatan</string>
+    <string name="contact_info">Repositori GitHub:\nhttps://github.com/AMOLEDArekkusu/WeSafe</string>
+    <string name="copyright">© 2025 WeSafe. Hak cipta terpelihara.</string>
 </resources>

@@ -63,6 +63,10 @@
             android:name=".SettingsActivity"
             android:theme="@style/Theme.WeSafe"
             android:exported="false" />
+        <activity 
+            android:name=".AboutActivity"
+            android:theme="@style/Theme.WeSafe"
+            android:exported="false" />
 
         <!-- FileProvider for camera functionality -->
         <provider

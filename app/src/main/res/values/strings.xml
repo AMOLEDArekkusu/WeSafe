@@ -111,4 +111,12 @@
     <string name="change_language">Change Application Language</string>
     <string name="about_app_title">About Application</string>
     <string name="enable_notifications_desc">Receive safety alerts and notifications</string>
+    <string name="version">Version</string>
+
+    <!-- About Screen -->
+    <string name="about_app_description">WeSafe is a comprehensive safety and emergency response application designed to help you stay secure and connected with your emergency contacts.</string>
+    <string name="key_features">Key Features:</string>
+    <string name="features_list">• Quick Emergency Alerts\n• Location Tracking\n• Emergency Contact Management\n• Incident Reporting\n• Multi-language Support\n• Real-time Weather Updates\n• Safety Tips and Guidance</string>
+    <string name="contact_info">GitHub Repository:\nhttps://github.com/AMOLEDArekkusu/WeSafe</string>
+    <string name="copyright">© 2025 WeSafe. All rights reserved.</string>
 </resources>
