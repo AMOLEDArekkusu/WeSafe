@@ -37,6 +37,10 @@ The app requires the following permissions:
 3. Configure your Google Maps API key in the manifest
 4. Build and run the application
 
+Huawei AppGallary and Google Play Store Will Comming Soon.......
+<img width="2000" height="2000" alt="CITYPNG COM Available On The App Gallery Huawei Logo - 2000x2000" src="https://github.com/user-attachments/assets/fd1abbfe-fccc-469c-95dc-6be6bc71718c" />
+
+
 ## Activities
 
 - MainActivity: Main dashboard and navigation
