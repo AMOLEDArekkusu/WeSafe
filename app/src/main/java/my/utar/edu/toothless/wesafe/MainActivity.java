@@ -11,6 +11,13 @@ import android.os.Build;
 import android.view.Window;
 import android.view.WindowManager;
 import androidx.appcompat.widget.Toolbar;
+import android.util.Log;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import android.location.Location;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -31,38 +38,34 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 /**
  * Main activity of the WeSafe app - serves as the home/dashboard screen
  * Displays current status, quick actions, and safety tips
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 123;
     private static final String[] REQUIRED_PERMISSIONS = {
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.CAMERA
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.CAMERA
     };
     private static final String[] BACKGROUND_LOCATION = {
-        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
     };
     private static final String[] STORAGE_PERMISSIONS = {
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_MEDIA_IMAGES
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_MEDIA_IMAGES
     };
 
     // UI Components
     private TextView tvWelcome, tvLocationStatus, tvWeatherInfo, tvIncidentCount, tvLastUpdate;
     private FloatingActionButton fabPanicButton;
     private MaterialButton btnViewMap, btnReportIncident, btnEmergencyContacts, btnSettings;
-    
+
     private IncidentStorage incidentStorage;
 
     // Location and Weather Components
@@ -73,11 +76,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         // Set theme and layout
         setTheme(R.style.Theme_WeSafe);
         setContentView(R.layout.activity_main);
-        
+
         // Initialize toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -92,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize incident storage
         incidentStorage = new IncidentStorage(this);
 
-        // Initialize location services
+        // Initialize location services - FIXED: Correct class name
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Initialize weather manager
@@ -112,9 +115,6 @@ public class MainActivity extends AppCompatActivity {
         // Check and request permissions
         checkAndRequestPermissions();
 
-        // Set up click listeners
-        setupClickListeners();
-
         // Load data (this would be implemented based on your data sources)
         loadData();
     }
@@ -125,20 +125,21 @@ public class MainActivity extends AppCompatActivity {
     private void initializeViews() {
         // Initialize text views
         tvWelcome = findViewById(R.id.tv_welcome);
+        tvWelcome.setText(R.string.welcome_message);
         tvLocationStatus = findViewById(R.id.tv_location_status);
+        tvLocationStatus.setText(R.string.getting_location);
         tvWeatherInfo = findViewById(R.id.tv_weather_info);
+        tvWeatherInfo.setText(R.string.loading_weather);
         tvIncidentCount = findViewById(R.id.tv_incident_count);
+        tvIncidentCount.setText(R.string.loading_incidents);
         tvLastUpdate = findViewById(R.id.tv_last_update);
-        
+
         // Initialize buttons
         fabPanicButton = findViewById(R.id.fab_panic_button);
         btnViewMap = findViewById(R.id.btn_view_map);
         btnReportIncident = findViewById(R.id.btn_report_incident);
         btnEmergencyContacts = findViewById(R.id.btn_emergency_contacts);
         btnSettings = findViewById(R.id.btn_settings);
-        
-        // Set up click listeners
-        setupClickListeners();
     }
 
     private void setupClickListeners() {
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         btnReportIncident.setOnClickListener(v -> startActivity(new Intent(this, IncidentReportActivity.class)));
         btnEmergencyContacts.setOnClickListener(v -> startActivity(new Intent(this, EmergencyContactsActivity.class)));
         btnSettings.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
-        
+
         // Panic button click listener
         fabPanicButton.setOnClickListener(v -> triggerEmergencyProtocol());
     }
@@ -158,9 +159,6 @@ public class MainActivity extends AppCompatActivity {
     private void loadData() {
         // This would typically involve API calls, database queries, etc.
         // For now, we'll set placeholder text
-
-        // Update location status (this would use Location Services in a real implementation)
-        tvLocationStatus.setText("📍 San Francisco, CA");
 
         // Update weather info (this would use a weather API in a real implementation)
         tvWeatherInfo.setText("🌤️ 23.5°C");
@@ -231,10 +229,10 @@ public class MainActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Location Permission Required")
                 .setMessage("WeSafe needs location permission to:\n\n" +
-                          "• Send your location to emergency contacts\n" +
-                          "• Show nearby incidents on the map\n" +
-                          "• Provide accurate emergency response\n\n" +
-                          "Please grant location permission to use these safety features.")
+                        "• Send your location to emergency contacts\n" +
+                        "• Show nearby incidents on the map\n" +
+                        "• Provide accurate emergency response\n\n" +
+                        "Please grant location permission to use these safety features.")
                 .setPositiveButton("Grant Permission", (dialog, which) -> {
                     requestLocationPermissions();
                 })
@@ -262,12 +260,12 @@ public class MainActivity extends AppCompatActivity {
             // For Android 12 and below
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
                         new String[]{
-                            Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
                         },
                         PERMISSION_REQUEST_CODE + 2);
             }
@@ -280,14 +278,14 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences prefs = getSharedPreferences("WeSafePrefs", MODE_PRIVATE);
             boolean hasShownLocationDialog = prefs.getBoolean("hasShownBackgroundLocationDialog", false);
 
-            if (!hasShownLocationDialog && 
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                
+            if (!hasShownLocationDialog &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+
                 new AlertDialog.Builder(this)
                         .setTitle("Background Location Access")
                         .setMessage("To provide emergency assistance even when the app is closed, " +
-                                  "please allow WeSafe to access your location all the time.")
+                                "please allow WeSafe to access your location all the time.")
                         .setPositiveButton("Grant Permission", (dialog, which) -> {
                             ActivityCompat.requestPermissions(this, BACKGROUND_LOCATION,
                                     PERMISSION_REQUEST_CODE + 1);
@@ -310,8 +308,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void showLocationRequiredSnackbar() {
         Snackbar.make(findViewById(android.R.id.content),
-                "Location permission is required for safety features",
-                Snackbar.LENGTH_INDEFINITE)
+                        "Location permission is required for safety features",
+                        Snackbar.LENGTH_INDEFINITE)
                 .setAction("Settings", v -> {
                     Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -323,9 +321,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                         @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        
+
         if (requestCode == PERMISSION_REQUEST_CODE) {
             boolean allGranted = true;
             for (int result : grantResults) {
@@ -353,8 +351,8 @@ public class MainActivity extends AppCompatActivity {
 
             if (!allGranted) {
                 Snackbar.make(findViewById(android.R.id.content),
-                        "Storage permission is required for uploading images",
-                        Snackbar.LENGTH_LONG)
+                                "Storage permission is required for uploading images",
+                                Snackbar.LENGTH_LONG)
                         .setAction("Settings", v -> {
                             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                             Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -370,10 +368,24 @@ public class MainActivity extends AppCompatActivity {
         if (locationPermissionGranted) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
+                // Add proper error handling
                 fusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(this, location -> {
-                            if (location != null) {
-                                updateLocationUI(location);
+                        .addOnSuccessListener(this, new com.google.android.gms.tasks.OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                if (location != null) {
+                                    updateLocationUI(location);
+                                } else {
+                                    // Handle case where location is null
+                                    tvLocationStatus.setText("📍 Location unavailable");
+                                }
+                            }
+                        })
+                        .addOnFailureListener(this, new com.google.android.gms.tasks.OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                tvLocationStatus.setText("📍 Error getting location");
+                                Log.e("Location", "Error getting location", e);
                             }
                         });
             }
@@ -383,16 +395,20 @@ public class MainActivity extends AppCompatActivity {
     private void getCurrentLocationAndAlert() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+            // FIXED: Added proper permission check
             fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, location -> {
-                        if (location != null) {
-                            // TODO: Implement emergency alert sending
-                            Toast.makeText(this, "Emergency alert sent with location: " +
-                                    location.getLatitude() + ", " + location.getLongitude(),
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(this, "Unable to get current location",
-                                    Toast.LENGTH_SHORT).show();
+                    .addOnSuccessListener(this, new com.google.android.gms.tasks.OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                // TODO: Implement emergency alert sending
+                                Toast.makeText(MainActivity.this, "Emergency alert sent with location: " +
+                                                location.getLatitude() + ", " + location.getLongitude(),
+                                        Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(MainActivity.this, "Unable to get current location",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
         }
@@ -403,7 +419,7 @@ public class MainActivity extends AppCompatActivity {
             // Update location display with coordinates
             tvLocationStatus.setText(String.format("📍 %.6f, %.6f",
                     location.getLatitude(), location.getLongitude()));
-            
+
             // Start weather updates when we get a location
             weatherManager.startUpdates(location);
 
@@ -416,27 +432,30 @@ public class MainActivity extends AppCompatActivity {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             geocoder.getFromLocation(
-                location.getLatitude(),
-                location.getLongitude(),
-                1,
-                addresses -> {
-                    if (!addresses.isEmpty()) {
-                        String address = addresses.get(0).getLocality() + ", " + 
-                                       addresses.get(0).getAdminArea();
-                        tvLocationStatus.setText("📍 " + address);
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    1,
+                    new Geocoder.GeocodeListener() {
+                        @Override
+                        public void onGeocode(List<Address> addresses) {
+                            if (!addresses.isEmpty()) {
+                                String address = addresses.get(0).getLocality() + ", " +
+                                        addresses.get(0).getAdminArea();
+                                tvLocationStatus.setText("📍 " + address);
+                            }
+                        }
                     }
-                }
             );
         } else {
             try {
                 List<Address> addresses = geocoder.getFromLocation(
-                    location.getLatitude(),
-                    location.getLongitude(),
-                    1
+                        location.getLatitude(),
+                        location.getLongitude(),
+                        1
                 );
                 if (!addresses.isEmpty()) {
-                    String address = addresses.get(0).getLocality() + ", " + 
-                                   addresses.get(0).getAdminArea();
+                    String address = addresses.get(0).getLocality() + ", " +
+                            addresses.get(0).getAdminArea();
                     tvLocationStatus.setText("📍 " + address);
                 }
             } catch (IOException e) {
@@ -482,20 +501,11 @@ public class MainActivity extends AppCompatActivity {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getColor(R.color.colorPrimary));
-            
+
             // Make status bar icons dark if we're using a light theme
             View decorView = window.getDecorView();
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
-    }
-
-    private void hideStatusBar() {
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
-                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        decorView.setSystemUiVisibility(uiOptions);
     }
 
     @Override

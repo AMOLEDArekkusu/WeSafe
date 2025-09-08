@@ -1,3 +1,114 @@
 <resources>
     <string name="app_name">WeSafe</string>
+    
+    <!-- Main Screen -->
+    <string name="welcome_message">Welcome to WeSafe</string>
+    <string name="current_status">Current Status</string>
+    <string name="getting_location">📍 Getting location...</string>
+    <string name="loading_weather">🌤️ Loading weather...</string>
+    <string name="loading_incidents">📊 Loading incidents...</string>
+    <string name="last_updated">Last updated: %s</string>
+    <string name="quick_actions">Quick Actions</string>
+    <string name="safety_tips">Safety Tips</string>
+    
+    <!-- Quick Actions -->
+    <string name="view_map">View Map</string>
+    <string name="report_incident">Report Incident</string>
+    <string name="emergency_contacts">Emergency Contacts</string>
+    <string name="settings">Settings</string>
+    
+    <!-- Safety Tips -->
+    <string name="tip_contacts">• Keep your emergency contacts updated</string>
+    <string name="tip_location">• Enable location tracking for better safety</string>
+    <string name="tip_report">• Report incidents to help your community</string>
+    <string name="tip_panic">• Use the panic button in emergencies</string>
+    
+    <!-- Settings -->
+    <string name="language">Language</string>
+    <string name="notifications">Notifications</string>
+    <string name="enable_notifications">Enable notifications</string>
+    <string name="notification_summary">Receive safety alerts and notifications</string>
+    <string name="about_app">About App</string>
+    <string name="about_summary">View application version and details</string>
+    
+    <!-- Dialogs -->
+    <string name="emergency_title">Emergency Alert</string>
+    <string name="emergency_message">Are you sure you want to trigger an emergency alert? This will notify your emergency contacts and share your location.</string>
+    <string name="yes_alert">Yes, Alert Contacts</string>
+    <string name="cancel">Cancel</string>
+    <string name="location_required">Location Required</string>
+    <string name="location_message">Location permission is required to send your location during emergencies. Please enable location permissions to use this feature.</string>
+    <string name="enable">Enable</string>
+    
+    <!-- Errors -->
+    <string name="error_location">Error getting location</string>
+    <string name="location_unavailable">Location unavailable</string>
+    <string name="error_weather">Could not fetch weather data</string>
+
+    <!-- Map Activity -->
+    <string name="getting_location_toast">Getting location...</string>
+    <string name="incident_reported">Incident reported successfully</string>
+    <string name="photo_captured">Photo captured successfully</string>
+    <string name="image_selected">Image selected successfully</string>
+    <string name="camera_permission_denied">Camera permission denied</string>
+    <string name="location_permission_denied">Location permission denied</string>
+    <string name="sample_incident">Sample Incident</string>
+    <string name="incident_description">Traffic accident reported %s ago</string>
+
+    <!-- Incident Report -->
+    <string name="report_incident_title">Report Incident</string>
+    <string name="incident_title">Incident Title</string>
+    <string name="incident_description_hint">Description</string>
+    <string name="location_address">Location/Address</string>
+    <string name="incident_type">Incident Type</string>
+    <string name="severity_level">Severity Level</string>
+    <string name="add_photos">Add Photos (Optional)</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="gallery">Gallery</string>
+    <string name="submit_report">Submit Report</string>
+    <string name="required_field">This field is required</string>
+    <string name="error_creating_image">Error creating image file</string>
+    <string name="no_camera_app">No camera app available</string>
+    <string name="no_gallery_app">Please install a File Manager or Gallery app</string>
+    <string name="could_not_access_image">Could not access the image</string>
+    <string name="could_not_get_location">Could not get location</string>
+
+    <!-- Emergency Contacts -->
+    <string name="emergency_contacts_title">Emergency Contacts</string>
+    <string name="edit_contact_title">Edit Contact</string>
+    <string name="add_contact_title">Add Contact</string>
+    <string name="contact_name">Name</string>
+    <string name="contact_phone">Phone Number</string>
+    <string name="contact_email">Email (Optional)</string>
+    <string name="contact_type">Contact Type</string>
+    <string name="primary_contact">Primary Contact</string>
+    <string name="receive_alerts">Receive Alerts</string>
+    <string name="receive_location">Receive Location Updates</string>
+    <string name="name_required">Name is required</string>
+    <string name="phone_required">Phone number is required</string>
+    <string name="save">Save</string>
+    <string name="discard_title">Discard Changes</string>
+    <string name="discard_message">You have unsaved changes. Are you sure you want to discard them?</string>
+    <string name="discard">Discard</string>
+    <string name="keep_editing">Keep Editing</string>
+    <string name="no_contacts">No emergency contacts added yet</string>
+    <string name="add_contact">Add Contact</string>
+    <string name="contact_deleted">Contact deleted</string>
+    <string name="location_permission_needed">Location Permission Needed</string>
+    <string name="location_permission_rationale">This app needs the Location permission to ensure your safety and provide accurate location information to your emergency contacts.</string>
+    <string name="background_location_needed">Background Location Access Needed</string>
+    <string name="background_location_rationale">This app needs background location access to notify your emergency contacts of your location even when the app is closed.</string>
+    <string name="background_location_granted">Background location access granted</string>
+
+    <!-- Dialog Controls -->
+    <string name="ok">OK</string>
+
+    <!-- Dialog Messages -->
+    <string name="unsaved_changes_title">Unsaved Changes</string>
+    <string name="unsaved_changes_message">You have unsaved changes. Are you sure you want to discard them?</string>
+
+    <!-- Settings -->
+    <string name="change_language">Change Application Language</string>
+    <string name="about_app_title">About Application</string>
+    <string name="enable_notifications_desc">Receive safety alerts and notifications</string>
 </resources>

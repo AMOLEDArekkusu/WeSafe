@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Contact Name">
+                android:hint="@string/contact_name">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_name"
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Phone Number">
+                android:hint="@string/contact_phone">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_phone"
@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Email (Optional)">
+                android:hint="@string/contact_email">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_email"
@@ -81,7 +81,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Contact Type"
+                android:text="@string/contact_type"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:layout_marginBottom="8dp" />
 
@@ -118,7 +118,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Primary Contact"
+                        android:text="@string/primary_contact"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
                     <TextView
@@ -154,7 +154,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Receive Emergency Alerts"
+                        android:text="@string/receive_alerts"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
                     <TextView
@@ -190,7 +190,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Receive Location Updates"
+                        android:text="@string/receive_location"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
                     <TextView
@@ -214,7 +214,7 @@
                 android:id="@+id/btn_save"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Save Contact"
+                android:text="@string/save"
                 android:textSize="16sp" />
 
         </LinearLayout>

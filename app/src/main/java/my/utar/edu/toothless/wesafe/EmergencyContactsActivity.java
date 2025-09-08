@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class EmergencyContactsActivity extends AppCompatActivity {
+public class EmergencyContactsActivity extends BaseActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private static final int BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 1002;
@@ -221,9 +221,9 @@ public class EmergencyContactsActivity extends AppCompatActivity {
 
     private void showLocationPermissionRationale() {
         new AlertDialog.Builder(this)
-                .setTitle("Location Permission Needed")
-                .setMessage("This app needs the Location permission to ensure your safety and provide accurate location information to your emergency contacts.")
-                .setPositiveButton("OK", (dialog, which) -> {
+                .setTitle(getString(R.string.location_permission_needed))
+                .setMessage(getString(R.string.location_permission_rationale))
+                .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
                     ActivityCompat.requestPermissions(this,
                             new String[]{
                                     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -231,7 +231,7 @@ public class EmergencyContactsActivity extends AppCompatActivity {
                             },
                             LOCATION_PERMISSION_REQUEST_CODE);
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> {
+                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
                     dialog.dismiss();
                     showLocationRequiredSnackbar();
                 })
@@ -244,14 +244,14 @@ public class EmergencyContactsActivity extends AppCompatActivity {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 new AlertDialog.Builder(this)
-                        .setTitle("Background Location Access Needed")
-                        .setMessage("This app needs background location access to notify your emergency contacts of your location even when the app is closed.")
-                        .setPositiveButton("OK", (dialog, which) -> {
+                        .setTitle(getString(R.string.background_location_needed))
+                        .setMessage(getString(R.string.background_location_rationale))
+                        .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
                             ActivityCompat.requestPermissions(this,
                                     new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},
                                     BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE);
                         })
-                        .setNegativeButton("Cancel", null)
+                        .setNegativeButton(getString(R.string.cancel), null)
                         .create()
                         .show();
             }
@@ -315,11 +315,13 @@ public class EmergencyContactsActivity extends AppCompatActivity {
         }
     }
 
-    private void hideStatusBar() {
+    @Override
+    protected void hideStatusBar() {
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
                      | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
     }
 

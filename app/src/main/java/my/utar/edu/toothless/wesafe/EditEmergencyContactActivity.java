@@ -16,7 +16,7 @@ import com.google.android.material.textfield.TextInputEditText;
 /**
  * Activity for adding or editing emergency contact information
  */
-public class EditEmergencyContactActivity extends AppCompatActivity {
+public class EditEmergencyContactActivity extends BaseActivity {
 
     private TextInputEditText etName, etPhone, etEmail;
     private Spinner spinnerType;
@@ -155,11 +155,13 @@ public class EditEmergencyContactActivity extends AppCompatActivity {
         return isValid;
     }
 
-    private void hideStatusBar() {
+    @Override
+    protected void hideStatusBar() {
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
                      | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
     }
 
@@ -195,13 +197,13 @@ public class EditEmergencyContactActivity extends AppCompatActivity {
 
     private void showDiscardDialog() {
         new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Discard Changes")
-                .setMessage("You have unsaved changes. Are you sure you want to discard them?")
-                .setPositiveButton("Discard", (dialog, which) -> {
+                .setTitle(getString(R.string.unsaved_changes_title))
+                .setMessage(getString(R.string.unsaved_changes_message))
+                .setPositiveButton(getString(R.string.discard), (dialog, which) -> {
                     setResult(RESULT_CANCELED);
                     finish();
                 })
-                .setNegativeButton("Keep Editing", null)
+                .setNegativeButton(getString(R.string.keep_editing), null)
                 .show();
     }
 

@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Incident Title"
+                android:hint="@string/incident_title"
                 app:startIconDrawable="@drawable/ic_title">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Description"
+                android:hint="@string/incident_description_hint"
                 app:startIconDrawable="@drawable/ic_description">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -72,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Location/Address"
+                android:hint="@string/location_address"
                 app:startIconDrawable="@drawable/ic_location">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -88,7 +88,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Incident Type"
+                android:text="@string/incident_type"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:layout_marginBottom="8dp" />
 
@@ -104,7 +104,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Severity Level"
+                android:text="@string/severity_level"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:layout_marginBottom="8dp" />
 
@@ -120,7 +120,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Photos (Optional)"
+                android:text="@string/add_photos"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:layout_marginBottom="8dp" />
 
@@ -138,7 +138,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    android:text="Take Photo"
+                    android:text="@string/take_photo"
                     app:icon="@drawable/ic_camera" />
 
                 <com.google.android.material.button.MaterialButton
@@ -148,7 +148,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:text="Gallery"
+                    android:text="@string/gallery"
                     app:icon="@drawable/ic_gallery" />
 
             </LinearLayout>
@@ -168,7 +168,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Submit Report"
+                android:text="@string/submit_report"
                 android:textSize="16sp"
                 app:cornerRadius="8dp" />
 

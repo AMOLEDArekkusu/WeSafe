@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WeSafe</string>
+    
+    <!-- Main Screen -->
+    <string name="welcome_message">Selamat Datang ke WeSafe</string>
+    <string name="current_status">Status Semasa</string>
+    <string name="getting_location">📍 Mendapatkan lokasi...</string>
+    <string name="loading_weather">🌤️ Memuat turun cuaca...</string>
+    <string name="loading_incidents">📊 Memuat turun insiden...</string>
+    <string name="last_updated">Kemas kini terakhir: %s</string>
+    <string name="quick_actions">Tindakan Pantas</string>
+    <string name="safety_tips">Petua Keselamatan</string>
+    
+    <!-- Quick Actions -->
+    <string name="view_map">Lihat Peta</string>
+    <string name="report_incident">Lapor Insiden</string>
+    <string name="emergency_contacts">Kenalan Kecemasan</string>
+    <string name="settings">Tetapan</string>
+    
+    <!-- Safety Tips -->
+    <string name="tip_contacts">• Pastikan kenalan kecemasan anda dikemas kini</string>
+    <string name="tip_location">• Aktifkan penjejakan lokasi untuk keselamatan lebih baik</string>
+    <string name="tip_report">• Laporkan insiden untuk membantu komuniti anda</string>
+    <string name="tip_panic">• Gunakan butang panik dalam kecemasan</string>
+    
+    <!-- Settings -->
+    <string name="language">Bahasa</string>
+    <string name="notifications">Pemberitahuan</string>
+    <string name="enable_notifications">Aktifkan pemberitahuan</string>
+    <string name="notification_summary">Terima amaran keselamatan dan pemberitahuan</string>
+    <string name="about_app">Mengenai Aplikasi</string>
+    <string name="about_summary">Lihat versi aplikasi dan butiran</string>
+    
+    <!-- Dialogs -->
+    <string name="emergency_title">Amaran Kecemasan</string>
+    <string name="emergency_message">Adakah anda pasti mahu mengaktifkan amaran kecemasan? Ini akan memberitahu kenalan kecemasan anda dan berkongsi lokasi anda.</string>
+    <string name="yes_alert">Ya, Beri Amaran</string>
+    <string name="cancel">Batal</string>
+    <string name="location_required">Lokasi Diperlukan</string>
+    <string name="location_message">Kebenaran lokasi diperlukan untuk menghantar lokasi anda semasa kecemasan. Sila aktifkan kebenaran lokasi untuk menggunakan ciri ini.</string>
+    <string name="enable">Aktifkan</string>
+    
+    <!-- Errors -->
+    <string name="error_location">Ralat mendapatkan lokasi</string>
+    <string name="location_unavailable">Lokasi tidak tersedia</string>
+    <string name="error_weather">Tidak dapat mendapatkan data cuaca</string>
+
+    <!-- Map Activity -->
+    <string name="getting_location_toast">Mendapatkan lokasi...</string>
+    <string name="incident_reported">Insiden berjaya dilaporkan</string>
+    <string name="photo_captured">Gambar berjaya diambil</string>
+    <string name="image_selected">Gambar berjaya dipilih</string>
+    <string name="camera_permission_denied">Kebenaran kamera ditolak</string>
+    <string name="location_permission_denied">Kebenaran lokasi ditolak</string>
+    <string name="sample_incident">Contoh Insiden</string>
+    <string name="incident_description">Kemalangan lalu lintas dilaporkan %s yang lalu</string>
+
+    <!-- Incident Report -->
+    <string name="report_incident_title">Lapor Insiden</string>
+    <string name="incident_title">Tajuk Insiden</string>
+    <string name="incident_description_hint">Penerangan</string>
+    <string name="location_address">Lokasi/Alamat</string>
+    <string name="incident_type">Jenis Insiden</string>
+    <string name="severity_level">Tahap Keterukan</string>
+    <string name="add_photos">Tambah Gambar (Pilihan)</string>
+    <string name="take_photo">Ambil Gambar</string>
+    <string name="gallery">Galeri</string>
+    <string name="submit_report">Hantar Laporan</string>
+    <string name="required_field">Ruangan ini diperlukan</string>
+    <string name="error_creating_image">Ralat mencipta fail gambar</string>
+    <string name="no_camera_app">Tiada aplikasi kamera tersedia</string>
+    <string name="no_gallery_app">Sila pasang aplikasi Pengurus Fail atau Galeri</string>
+    <string name="could_not_access_image">Tidak dapat mengakses gambar</string>
+    <string name="could_not_get_location">Tidak dapat mendapatkan lokasi</string>
+
+    <!-- Emergency Contacts -->
+    <string name="emergency_contacts_title">Kenalan Kecemasan</string>
+    <string name="edit_contact_title">Sunting Kenalan</string>
+    <string name="add_contact_title">Tambah Kenalan</string>
+    <string name="contact_name">Nama</string>
+    <string name="contact_phone">Nombor Telefon</string>
+    <string name="contact_email">E-mel (Pilihan)</string>
+    <string name="contact_type">Jenis Kenalan</string>
+    <string name="primary_contact">Kenalan Utama</string>
+    <string name="receive_alerts">Terima Amaran</string>
+    <string name="receive_location">Terima Kemaskini Lokasi</string>
+    <string name="name_required">Nama diperlukan</string>
+    <string name="phone_required">Nombor telefon diperlukan</string>
+    <string name="save">Simpan</string>
+    <string name="discard_title">Buang Perubahan</string>
+    <string name="discard_message">Anda mempunyai perubahan yang belum disimpan. Adakah anda pasti mahu membuangnya?</string>
+    <string name="discard">Buang</string>
+    <string name="keep_editing">Teruskan Menyunting</string>
+    <string name="no_contacts">Tiada kenalan kecemasan ditambah lagi</string>
+    <string name="add_contact">Tambah Kenalan</string>
+    <string name="contact_deleted">Kenalan dipadamkan</string>
+    <string name="location_permission_needed">Kebenaran Lokasi Diperlukan</string>
+    <string name="location_permission_rationale">Aplikasi ini memerlukan kebenaran lokasi untuk memastikan keselamatan anda dan memberikan maklumat lokasi yang tepat kepada kenalan kecemasan anda.</string>
+    <string name="background_location_needed">Kebenaran Lokasi Latar Belakang Diperlukan</string>
+    <string name="background_location_rationale">Aplikasi ini memerlukan akses lokasi latar belakang untuk memberitahu kenalan kecemasan anda tentang lokasi anda walaupun aplikasi ditutup.</string>
+    <string name="background_location_granted">Akses lokasi latar belakang diberikan</string>
+
+    <!-- Dialog Controls -->
+    <string name="ok">OK</string>
+    <string name="yes">Ya</string>
+    <string name="no">Tidak</string>
+
+    <!-- Dialog Messages -->
+    <string name="unsaved_changes_title">Perubahan Belum Disimpan</string>
+    <string name="unsaved_changes_message">Anda mempunyai perubahan yang belum disimpan. Adakah anda pasti mahu membuangnya?</string>
+    <string name="changes_saved">Perubahan berjaya disimpan</string>
+    <string name="action_required">Tindakan Diperlukan</string>
+    <string name="disable">Nyahaktifkan</string>
+
+    <!-- Settings -->
+    <string name="change_language">Tukar bahasa aplikasi</string>
+    <string name="about_app_title">Mengenai Aplikasi</string>
+    <string name="enable_notifications_desc">Terima amaran dan pemberitahuan keselamatan</string>
+    <string name="version">Versi</string>
+</resources>

@@ -43,7 +43,7 @@ import java.util.List;
 /**
  * Activity for reporting new incidents with optional media attachments
  */
-public class IncidentReportActivity extends AppCompatActivity {
+public class IncidentReportActivity extends BaseActivity {
 
     private TextInputEditText etTitle, etDescription, etAddress;
     private Spinner spinnerType, spinnerSeverity;
@@ -382,11 +382,13 @@ public class IncidentReportActivity extends AppCompatActivity {
         }
     }
 
-    private void hideStatusBar() {
+    @Override
+    protected void hideStatusBar() {
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
                      | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
     }
 

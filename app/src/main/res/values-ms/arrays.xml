@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Language Settings -->
+    <string-array name="language_entries">
+        <item>Lalai Sistem</item>
+        <item>English</item>
+        <item>Bahasa Malaysia</item>
+        <item>简体中文</item>
+    </string-array>
+
+    <string-array name="contact_types">
+        <item>Keluarga</item>
+        <item>Kawan</item>
+        <item>Rakan Sekerja</item>
+        <item>Jiran</item>
+        <item>Lain-lain</item>
+    </string-array>
+
+    <string-array name="incident_types">
+        <item>Kemalangan</item>
+        <item>Jenayah</item>
+        <item>Bencana Alam</item>
+        <item>Kecemasan Perubatan</item>
+        <item>Kebakaran</item>
+        <item>Lain-lain</item>
+    </string-array>
+
+    <string-array name="severity_levels">
+        <item>Rendah</item>
+        <item>Sederhana</item>
+        <item>Tinggi</item>
+        <item>Kritikal</item>
+    </string-array>
+</resources>

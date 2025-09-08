@@ -29,7 +29,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivity extends BaseActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private FloatingActionButton fabReportIncident, fabMyLocation;
@@ -106,7 +106,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                 } else {
-                    Toast.makeText(this, "Getting location...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.getting_location_toast), Toast.LENGTH_SHORT).show();
                     requestLocationUpdates();
                 }
             }
@@ -144,8 +144,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         LatLng sampleIncident = new LatLng(37.7749, -122.4194);
         mMap.addMarker(new MarkerOptions()
                 .position(sampleIncident)
-                .title("Sample Incident")
-                .snippet("Traffic accident reported 30 mins ago"));
+                .title(getString(R.string.sample_incident))
+                .snippet(getString(R.string.incident_description, "30 mins")));
 
         // Move camera to the sample location
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sampleIncident, 12));
@@ -168,14 +168,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         dialog.show(getSupportFragmentManager(), "IncidentDetailDialog");
     }
 
-    private void hideStatusBar() {
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
-                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -189,16 +181,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (requestCode == REQUEST_REPORT_INCIDENT && resultCode == RESULT_OK) {
             // Refresh the map or add the new incident marker
             // This will be implemented when the backend is ready
-            Toast.makeText(this, "Incident reported successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.incident_reported), Toast.LENGTH_SHORT).show();
         } else if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
                 // Handle camera photo
-                Toast.makeText(this, "Photo captured successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.photo_captured), Toast.LENGTH_SHORT).show();
                 // TODO: Process the captured photo
                 // The photo data is in: data.getExtras().get("data") as a Bitmap
             } else if (requestCode == REQUEST_PICK_IMAGE) {
                 // Handle picked image
-                Toast.makeText(this, "Image selected successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.image_selected), Toast.LENGTH_SHORT).show();
                 // TODO: Process the selected image
                 // The image URI is in: data.getData()
             }
@@ -274,7 +266,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
-                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.camera_permission_denied), Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -283,7 +275,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 // Start location updates
                 requestLocationUpdates();
             } else {
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.location_permission_denied), Toast.LENGTH_SHORT).show();
             }
         }
     }
