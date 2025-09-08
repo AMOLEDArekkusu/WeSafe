@@ -38,7 +38,8 @@ The app requires the following permissions:
 4. Build and run the application
 
 Huawei AppGallary and Google Play Store Will Comming Soon.......
-<img width="2000" height="2000" alt="CITYPNG COM Available On The App Gallery Huawei Logo - 2000x2000" src="https://github.com/user-attachments/assets/fd1abbfe-fccc-469c-95dc-6be6bc71718c" />
+
+<img width="400" height="120" alt="Huawei_AppGallery_white_badge_EN" src="https://github.com/user-attachments/assets/9a41845f-db73-40f0-8e99-a4dbf3d7c5ce" />  <img width="400" height="120" alt="get-it-on-google-play-badge-seeklogo" src="https://github.com/user-attachments/assets/ba93b018-0b7d-496c-8587-aec569c2e023" />
 
 
 ## Activities
