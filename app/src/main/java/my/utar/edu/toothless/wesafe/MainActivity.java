@@ -13,11 +13,8 @@ import android.view.WindowManager;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import android.location.Location;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -28,11 +25,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -61,8 +55,10 @@ public class MainActivity extends BaseActivity {
             Manifest.permission.READ_MEDIA_IMAGES
     };
 
-    // UI Components
-    private TextView tvWelcome, tvLocationStatus, tvWeatherInfo, tvIncidentCount, tvLastUpdate;
+    private TextView tvLocationStatus;
+    private TextView tvWeatherInfo;
+    private TextView tvIncidentCount;
+    private TextView tvLastUpdate;
     private FloatingActionButton fabPanicButton;
     private MaterialButton btnViewMap, btnReportIncident, btnEmergencyContacts, btnSettings;
 
@@ -124,7 +120,8 @@ public class MainActivity extends BaseActivity {
      */
     private void initializeViews() {
         // Initialize text views
-        tvWelcome = findViewById(R.id.tv_welcome);
+        // UI Components
+        TextView tvWelcome = findViewById(R.id.tv_welcome);
         tvWelcome.setText(R.string.welcome_message);
         tvLocationStatus = findViewById(R.id.tv_location_status);
         tvLocationStatus.setText(R.string.getting_location);
@@ -194,7 +191,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void checkAndRequestPermissions() {
-        if (!hasLocationPermissions()) {
+        if (hasLocationPermissions()) {
             showLocationPermissionRationale();
         } else {
             locationPermissionGranted = true;
@@ -219,10 +216,10 @@ public class MainActivity extends BaseActivity {
     private boolean hasLocationPermissions() {
         for (String permission : REQUIRED_PERMISSIONS) {
             if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     private void showLocationPermissionRationale() {
@@ -511,7 +508,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!hasLocationPermissions()) {
+        if (hasLocationPermissions()) {
             showLocationRequiredSnackbar();
         } else {
             initializeLocationUpdates(); // Refresh location and weather
