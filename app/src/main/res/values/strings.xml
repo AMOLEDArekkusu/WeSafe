@@ -1,12 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WeSafe</string>
     
     <!-- Main Screen -->
     <string name="welcome_message">Welcome to WeSafe</string>
     <string name="current_status">Current Status</string>
-    <string name="getting_location">📍 Getting location...</string>
-    <string name="loading_weather">🌤️ Loading weather...</string>
-    <string name="loading_incidents">📊 Loading incidents...</string>
+    <string name="getting_location"> Getting location...</string>
+    <string name="loading_weather"> Loading weather...</string>
+    <string name="loading_incidents"> Loading incidents...</string>
     <string name="last_updated">Last updated: %s</string>
     <string name="quick_actions">Quick Actions</string>
     <string name="safety_tips">Safety Tips</string>
@@ -18,12 +19,26 @@
     <string name="settings">Settings</string>
     
     <!-- Safety Tips -->
-    <string name="tip_contacts">• Keep your emergency contacts updated</string>
-    <string name="tip_location">• Enable location tracking for better safety</string>
-    <string name="tip_report">• Report incidents to help your community</string>
-    <string name="tip_panic">• Use the panic button in emergencies</string>
+    <string name="tip_contacts"> Keep your emergency contacts updated</string>
+    <string name="tip_location"> Enable location tracking for better safety</string>
+    <string name="tip_report"> Report incidents to help your community</string>
+    <string name="tip_panic"> Use the panic button in emergencies</string>
     
     <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_subtitle">Customize your WeSafe experience</string>
+    <string name="profile_title">Profile</string>
+    <string name="profile_subtitle">Manage your personal information</string>
+    <string name="language_title">Language</string>
+    <string name="language_subtitle">Change Application Language</string>
+    <string name="theme_title">Theme</string>
+    <string name="theme_subtitle">Choose your preferred appearance</string>
+    <string name="notifications_title">Enable notifications</string>
+    <string name="notifications_subtitle">Receive safety alerts and notifications</string>
+    <string name="about_title">About Application</string>
+    <string name="about_subtitle">View application version and details</string>
+    
+    <!-- Basic Settings -->
     <string name="language">Language</string>
     <string name="notifications">Notifications</string>
     <string name="enable_notifications">Enable notifications</string>
@@ -40,43 +55,39 @@
     <string name="location_message">Location permission is required to send your location during emergencies. Please enable location permissions to use this feature.</string>
     <string name="enable">Enable</string>
     
-    <!-- Errors -->
-    <string name="error_location">Error getting location</string>
-    <string name="location_unavailable">Location unavailable</string>
-    <string name="error_weather">Could not fetch weather data</string>
-
-    <!-- Map Activity -->
-    <string name="getting_location_toast">Getting location...</string>
-    <string name="incident_reported">Incident reported successfully</string>
-    <string name="photo_captured">Photo captured successfully</string>
-    <string name="image_selected">Image selected successfully</string>
-    <string name="camera_permission_denied">Camera permission denied</string>
-    <string name="location_permission_denied">Location permission denied</string>
-    <string name="sample_incident">Sample Incident</string>
-    <string name="incident_description">Traffic accident reported %s ago</string>
-
-    <!-- Incident Report -->
-    <string name="report_incident_title">Report Incident</string>
-    <string name="incident_title">Incident Title</string>
-    <string name="incident_description_hint">Description</string>
-    <string name="location_address">Location/Address</string>
-    <string name="incident_type">Incident Type</string>
-    <string name="severity_level">Severity Level</string>
-    <string name="add_photos">Add Photos (Optional)</string>
-    <string name="take_photo">Take Photo</string>
-    <string name="gallery">Gallery</string>
-    <string name="submit_report">Submit Report</string>
-    <string name="required_field">This field is required</string>
-    <string name="error_creating_image">Error creating image file</string>
-    <string name="no_camera_app">No camera app available</string>
-    <string name="no_gallery_app">Please install a File Manager or Gallery app</string>
-    <string name="could_not_access_image">Could not access the image</string>
-    <string name="could_not_get_location">Could not get location</string>
-
+    <!-- First Time Setup -->
+    <string name="first_time_welcome">Welcome to WeSafe!</string>
+    <string name="first_time_setup">First Time Setup</string>
+    <string name="background_location_title">Background Location Access</string>
+    <string name="background_location_message">To provide emergency assistance even when the app is closed, please allow WeSafe to access your location all the time.</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="not_now">Not Now</string>
+    
+    <!-- Developer section -->
+    <string name="developer_title">Developer Options</string>
+    <string name="developer_subtitle">Testing and debugging tools</string>
+    <string name="reset_first_time_setup">Reset First-Time Setup</string>
+    <string name="reset_first_time_setup_message">This will reset the first-time setup so you can test the background location permission dialog again.</string>
+    <string name="reset_successful">First-time setup has been reset</string>
+    
+    <!-- Dialog Controls -->
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    
+    <!-- Theme Options -->
+    <string name="theme_system">System Default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    
+    <!-- About Activity -->
+    <string name="about_app_description">WeSafe is a comprehensive safety and emergency response application designed to help you stay secure and connected with your emergency contacts.</string>
+    <string name="key_features">Key Features:</string>
+    <string name="features_list">• Quick Emergency Alerts\n• Location Tracking\n• Emergency Contact Management\n• Incident Reporting\n• Multi-language Support\n• Real-time Weather Updates\n• Safety Tips and Guidance</string>
+    <string name="contact_info">GitHub Repository:\nhttps://github.com/AMOLEDArekkusu/WeSafe</string>
+    <string name="copyright">© 2025 WeSafe. All rights reserved.</string>
+    
     <!-- Emergency Contacts -->
-    <string name="emergency_contacts_title">Emergency Contacts</string>
-    <string name="edit_contact_title">Edit Contact</string>
-    <string name="add_contact_title">Add Contact</string>
     <string name="contact_name">Name</string>
     <string name="contact_phone">Phone Number</string>
     <string name="contact_email">Email (Optional)</string>
@@ -84,39 +95,119 @@
     <string name="primary_contact">Primary Contact</string>
     <string name="receive_alerts">Receive Alerts</string>
     <string name="receive_location">Receive Location Updates</string>
-    <string name="name_required">Name is required</string>
-    <string name="phone_required">Phone number is required</string>
+    <string name="primary_contact_desc">This contact will be prioritized in emergencies</string>
+    <string name="receive_alerts_desc">Receive SMS alerts during emergencies</string>
+    <string name="receive_location_desc">Receive periodic location updates</string>
     <string name="save">Save</string>
-    <string name="discard_title">Discard Changes</string>
-    <string name="discard_message">You have unsaved changes. Are you sure you want to discard them?</string>
+    <string name="delete_contact">Delete Contact</string>
+    <string name="delete_contact_title">Delete Contact</string>
+    <string name="delete_contact_message">Are you sure you want to delete this emergency contact? This action cannot be undone.</string>
+    <string name="delete">Delete</string>
+    <string name="contact_deleted">Contact deleted successfully</string>
+    <string name="no_contacts">No emergency contacts added yet</string>
+    <string name="no_contacts_description">Add emergency contacts to receive alerts and notifications when you need help.</string>
+    <string name="add_contact">Add Contact</string>
+    
+    <!-- Incident Report -->
+    <string name="incident_title">Incident Title *</string>
+    <string name="incident_description_hint">Description *</string>
+    <string name="location_address">Location/Address *</string>
+    <string name="incident_type">Incident Type *</string>
+    <string name="severity_level">Severity Level *</string>
+    <string name="add_photos">Add Photos (Optional)</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="gallery">Gallery</string>
+    <string name="submit_report">Submit Report</string>
+    
+    <!-- Validation Messages -->
+    <string name="error_title_required">Title is required</string>
+    <string name="error_description_required">Description is required</string>
+    <string name="error_location_required">Location is required</string>
+    <string name="error_incident_type_required">Please select an incident type</string>
+    <string name="error_severity_required">Please select a severity level</string>
+    <string name="success_incident_submitted">Incident report submitted successfully</string>
+    
+    <!-- Additional strings -->
+    <string name="version">Version</string>
+    <string name="error_location">Error getting location</string>
+    <string name="location_unavailable">Location unavailable</string>
+    <string name="error_weather">Could not fetch weather data</string>
+    
+    <!-- Main Activity UI -->
+    <string name="your_safety_dashboard">Your safety dashboard</string>
+    <string name="emergency_alert_title">Emergency Alert</string>
+    <string name="emergency_alert_subtitle">Tap to send emergency alert</string>
+    <string name="location_title">Location</string>
+    <string name="safety_check_title">Safety Check</string>
+    <string name="safety_status_title">Safety Status</string>
+    <string name="location_status">Location</string>
+    <string name="contacts_title">Contacts</string>
+    <string name="updated_title">Updated</string>
+    <string name="weather_conditions_title">Weather Conditions</string>
+    <string name="condition_title">Condition</string>
+    <string name="humidity_title">Humidity</string>
+    <string name="wind_title">Wind</string>
+    <string name="tap_to_refresh_weather">Tap to refresh weather data</string>
+    <string name="configure_safety_preferences">Configure your safety preferences</string>
+    
+    <!-- Navigation -->
+    <string name="nav_maps">Maps</string>
+    <string name="nav_contact">Contact</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_report">Report</string>
+    <string name="nav_settings">Settings</string>
+    
+    <!-- Java Code Referenced Strings -->
+    <string name="about_app_title">About Application</string>
+    <string name="unsaved_changes_title">Unsaved Changes</string>
+    <string name="unsaved_changes_message">You have unsaved changes. Are you sure you want to discard them?</string>
     <string name="discard">Discard</string>
     <string name="keep_editing">Keep Editing</string>
-    <string name="no_contacts">No emergency contacts added yet</string>
-    <string name="add_contact">Add Contact</string>
-    <string name="contact_deleted">Contact deleted</string>
     <string name="location_permission_needed">Location Permission Needed</string>
     <string name="location_permission_rationale">This app needs the Location permission to ensure your safety and provide accurate location information to your emergency contacts.</string>
     <string name="background_location_needed">Background Location Access Needed</string>
     <string name="background_location_rationale">This app needs background location access to notify your emergency contacts of your location even when the app is closed.</string>
-    <string name="background_location_granted">Background location access granted</string>
+    
+    <!-- First Time Setup -->
+    <string name="first_time_setup_title">Welcome to Emergency Contacts</string>
+    <string name="first_time_setup_message">Add trusted contacts who will be notified during emergencies. We\'ll need location permissions to keep you safe and connected.</string>
+    <string name="last_updated_prefix">Last updated: %s</string>
+    <string name="error_getting_location_status">📍 Error getting location</string>
+    <string name="location_unavailable_status">📍 Location unavailable</string>
+    <string name="location_prefix">📍 %s</string>
+    <string name="updated_just_now">Updated just now • Tap to refresh</string>
+    <string name="updating_weather_data">Updating weather data...</string>
+    <string name="weather_loading">☁️ Loading...</string>
+    <string name="unknown_weather_condition">🌡️ Unknown</string>
+    <string name="location_needed_for_weather">Location needed for weather • Tap to retry</string>
+    <string name="getting_location_toast">Getting location...</string>
+    <string name="sample_incident">Sample Incident</string>
+    <string name="incident_description">Traffic accident reported %s ago</string>
+    <string name="incident_reported">Incident reported successfully</string>
+    <string name="photo_captured">Photo captured successfully</string>
+    <string name="image_selected">Image selected successfully</string>
+    <string name="camera_permission_denied">Camera permission denied</string>
+    <string name="location_permission_denied">Location permission denied</string>
+    <string name="select_theme">Select Theme</string>
+    <!-- EditEmergencyContact validation -->
+    <string name="name_required">Name is required</string>
+    <string name="phone_required">Phone number is required</string>
+    <string name="edit_emergency_contact_title">Edit Emergency Contact</string>
+    <string name="profile_saved_successfully">Profile saved successfully</string>
+    <string name="personal_information">Personal Information</string>
+    <string name="contact_information">Contact Information</string>
+    <string name="emergency_contacts_description">People to contact in case of emergency</string>
+    <string name="add_emergency_contact">ADD EMERGENCY CONTACT</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="full_name">Full Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="email">Email</string>
+    
+    <!-- Error messages -->
+    <string name="error_loading_app">Error loading app: %s</string>
+    <string name="emergency_button_clicked">Emergency button clicked!</string>
+    
+    <!-- Language Selection -->
+    <string name="select_language_title">Select Language</string>
 
-    <!-- Dialog Controls -->
-    <string name="ok">OK</string>
-
-    <!-- Dialog Messages -->
-    <string name="unsaved_changes_title">Unsaved Changes</string>
-    <string name="unsaved_changes_message">You have unsaved changes. Are you sure you want to discard them?</string>
-
-    <!-- Settings -->
-    <string name="change_language">Change Application Language</string>
-    <string name="about_app_title">About Application</string>
-    <string name="enable_notifications_desc">Receive safety alerts and notifications</string>
-    <string name="version">Version</string>
-
-    <!-- About Screen -->
-    <string name="about_app_description">WeSafe is a comprehensive safety and emergency response application designed to help you stay secure and connected with your emergency contacts.</string>
-    <string name="key_features">Key Features:</string>
-    <string name="features_list">• Quick Emergency Alerts\n• Location Tracking\n• Emergency Contact Management\n• Incident Reporting\n• Multi-language Support\n• Real-time Weather Updates\n• Safety Tips and Guidance</string>
-    <string name="contact_info">GitHub Repository:\nhttps://github.com/AMOLEDArekkusu/WeSafe</string>
-    <string name="copyright">© 2025 WeSafe. All rights reserved.</string>
 </resources>

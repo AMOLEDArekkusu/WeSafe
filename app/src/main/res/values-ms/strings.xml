@@ -88,11 +88,16 @@
     <string name="name_required">Nama diperlukan</string>
     <string name="phone_required">Nombor telefon diperlukan</string>
     <string name="save">Simpan</string>
+    <string name="delete_contact">Padam Kenalan</string>
+    <string name="delete_contact_title">Padam Kenalan</string>
+    <string name="delete_contact_message">Adakah anda pasti mahu memadam kenalan kecemasan ini? Tindakan ini tidak boleh dibatalkan.</string>
+    <string name="delete">Padam</string>
     <string name="discard_title">Buang Perubahan</string>
     <string name="discard_message">Anda mempunyai perubahan yang belum disimpan. Adakah anda pasti mahu membuangnya?</string>
     <string name="discard">Buang</string>
     <string name="keep_editing">Teruskan Menyunting</string>
     <string name="no_contacts">Tiada kenalan kecemasan ditambah lagi</string>
+    <string name="no_contacts_description">Tambah kenalan kecemasan untuk menerima amaran dan pemberitahuan apabila anda memerlukan bantuan.</string>
     <string name="add_contact">Tambah Kenalan</string>
     <string name="contact_deleted">Kenalan dipadamkan</string>
     <string name="location_permission_needed">Kebenaran Lokasi Diperlukan</string>
@@ -125,4 +130,75 @@
     <string name="features_list">• Amaran Kecemasan Segera\n• Penjejakan Lokasi\n• Pengurusan Kenalan Kecemasan\n• Pelaporan Insiden\n• Sokongan Pelbagai Bahasa\n• Kemas Kini Cuaca Masa Nyata\n• Petua dan Panduan Keselamatan</string>
     <string name="contact_info">Repositori GitHub:\nhttps://github.com/AMOLEDArekkusu/WeSafe</string>
     <string name="copyright">© 2025 WeSafe. Hak cipta terpelihara.</string>
+    <string name="profile_saved_successfully">Profil berjaya disimpan</string>
+    <string name="personal_information">Maklumat Peribadi</string>
+    <string name="contact_information">Maklumat Hubungan</string>
+    <string name="emergency_contacts_description">Orang untuk dihubungi dalam kecemasan</string>
+    <string name="add_emergency_contact">TAMBAH KENALAN KECEMASAN</string>
+    <string name="save_changes">Simpan Perubahan</string>
+    <string name="full_name">Nama Penuh</string>
+    <string name="phone_number">Nombor Telefon</string>
+    <string name="email">E-mel</string>
+    
+    <!-- Error messages -->
+    <string name="error_loading_app">Ralat memuatkan aplikasi: %s</string>
+    <string name="emergency_button_clicked">Butang kecemasan diklik!</string>
+    
+    <!-- Missing UI strings -->
+    <string name="your_safety_dashboard">Papan pemuka keselamatan anda</string>
+    <string name="emergency_alert_subtitle">Ketik untuk menghantar amaran kecemasan</string>
+    <string name="configure_safety_preferences">Konfigurasi pilihan keselamatan anda</string>
+    <string name="unknown_weather_condition">🌡️ Tidak Diketahui</string>
+    <string name="location_needed_for_weather">Lokasi diperlukan untuk cuaca • Ketik untuk cuba lagi</string>
+    
+    <!-- Navigation strings -->
+    <string name="nav_maps">Peta</string>
+    <string name="nav_contact">Kenalan</string>
+    <string name="nav_home">Rumah</string>
+    <string name="nav_report">Laporan</string>
+    <string name="nav_settings">Tetapan</string>
+    
+    <!-- UI Element strings -->
+    <string name="location_title">Lokasi</string>
+    <string name="safety_check_title">Pemeriksaan Keselamatan</string>
+    <string name="contacts_title">Kenalan</string>
+    <string name="updated_title">Dikemaskini</string>
+    <string name="condition_title">Keadaan</string>
+    <string name="humidity_title">Kelembapan</string>
+        <string name="wind_title">Angin</string>
+    
+    <!-- Status strings -->
+    <string name="safety_status_title">Status Keselamatan</string>
+    <string name="location_status">Lokasi</string>
+    <string name="error_getting_location_status">📍 Ralat mendapatkan lokasi</string>
+    <string name="location_unavailable_status">📍 Lokasi tidak tersedia</string>
+    
+    <!-- First Time Setup -->
+    <string name="first_time_welcome">Selamat Datang ke WeSafe!</string>
+    <string name="first_time_setup">Persediaan Kali Pertama</string>
+    <string name="first_time_setup_title">Selamat Datang ke Kenalan Kecemasan</string>
+    <string name="first_time_setup_message">Tambah kenalan yang dipercayai yang akan dimaklumkan semasa kecemasan. Kami memerlukan kebenaran lokasi untuk memastikan anda selamat dan berhubung.</string>
+    <string name="reset_first_time_setup">Set Semula Persediaan Kali Pertama</string>
+    <string name="reset_first_time_setup_message">Ini akan menetapkan semula persediaan kali pertama supaya anda boleh menguji dialog kebenaran lokasi latar belakang lagi.</string>
+    <string name="reset_successful">Persediaan kali pertama telah ditetapkan semula</string>
+    
+    <!-- Language Selection -->
+    <string name="select_language_title">Pilih Bahasa</string>
+    
+    <!-- Settings Activity -->
+    <string name="settings_title">Tetapan</string>
+    <string name="settings_subtitle">Sesuaikan pengalaman WeSafe anda</string>
+    <string name="profile_title">Profil</string>
+    <string name="profile_subtitle">Urus maklumat peribadi anda</string>
+    <string name="language_title">Bahasa</string>
+    <string name="language_subtitle">Tukar Bahasa Aplikasi</string>
+    <string name="theme_title">Tema</string>
+    <string name="theme_subtitle">Pilih penampilan yang anda suka</string>
+    <string name="notifications_title">Dayakan pemberitahuan</string>
+    <string name="notifications_subtitle">Terima amaran keselamatan dan pemberitahuan</string>
+    <string name="about_title">Mengenai Aplikasi</string>
+    <string name="about_subtitle">Lihat versi aplikasi dan butiran</string>
+    <string name="developer_title">Pilihan Pembangun</string>
+    <string name="developer_subtitle">Alat ujian dan nyahpepijat</string>
+
 </resources>

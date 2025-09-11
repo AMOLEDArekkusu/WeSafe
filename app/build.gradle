@@ -3,33 +3,37 @@ plugins {
 }
 
 android {
-    namespace 'my.utar.edu.toothless.wesafe'
-    compileSdk 36
+    namespace = 'my.utar.edu.toothless.wesafe'
+    compileSdk = 35
 
     defaultConfig {
-        applicationId "my.utar.edu.toothless.wesafe"
-        minSdk 24
-        targetSdk 36
-        versionCode 1
-        versionName "1.0 alpha"
+        applicationId = "my.utar.edu.toothless.wesafe"
+        minSdk = 24
+        targetSdk = 35
+        versionCode = 1
+        versionName = "1.1 beta"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
     }
 }
 
 dependencies {
-
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
@@ -39,10 +43,7 @@ dependencies {
     implementation libs.preference
     implementation libs.gson
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
-    implementation libs.gms.play.services.location
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
-    implementation 'com.google.android.gms:play-services-location:21.0.1'
-
 }

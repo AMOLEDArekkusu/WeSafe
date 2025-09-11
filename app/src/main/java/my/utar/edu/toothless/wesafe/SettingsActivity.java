@@ -7,11 +7,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceScreen;
-import androidx.preference.SwitchPreferenceCompat;
-import androidx.preference.ListPreference;
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.appcompat.widget.Toolbar;
 import java.util.Locale;
 
 /**
@@ -19,102 +19,223 @@ import java.util.Locale;
  */
 public class SettingsActivity extends BaseActivity {
 
+    private MaterialSwitch notificationSwitch;
+    private SharedPreferences prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         hideStatusBar();
         setContentView(R.layout.activity_settings);
 
-        setSupportActionBar(findViewById(R.id.toolbar));
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        prefs = getSharedPreferences("WeSafePrefs", Context.MODE_PRIVATE);
 
-        // Load settings fragment
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.settings_container, new SettingsFragment())
-                .commit();
+        setupToolbar();
+        setupUI();
+        setupBottomNavigation();
     }
 
-    public static class SettingsFragment extends PreferenceFragmentCompat {
-        @Override
-        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            // Create a PreferenceScreen to hold your preferences
-            PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(requireContext());
-            setPreferenceScreen(preferenceScreen);
-
-            // Language settings
-            ListPreference languagePreference = new ListPreference(requireContext());
-            languagePreference.setKey("app_language");
-            languagePreference.setTitle(getString(R.string.language));
-            languagePreference.setSummary(getString(R.string.change_language));
-            languagePreference.setEntries(R.array.language_entries);
-            languagePreference.setEntryValues(R.array.language_values);
-            
-            // Set current language as default
-            SharedPreferences prefs = requireContext().getSharedPreferences("WeSafePrefs", Context.MODE_PRIVATE);
-            String currentLanguage = prefs.getString("app_language", "default");
-            languagePreference.setDefaultValue(currentLanguage);
-            languagePreference.setValue(currentLanguage);
-            
-            languagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                String languageCode = (String) newValue;
-                updateLanguage(languageCode);
-                return true;
-            });
-            preferenceScreen.addPreference(languagePreference);
-
-            // Notifications settings
-            SwitchPreferenceCompat notificationPreference = new SwitchPreferenceCompat(requireContext());
-            notificationPreference.setKey("notifications_new_message");
-            notificationPreference.setTitle(getString(R.string.enable_notifications));
-            notificationPreference.setSummary(getString(R.string.enable_notifications_desc));
-            notificationPreference.setDefaultValue(true);
-            preferenceScreen.addPreference(notificationPreference);
-
-            // Example: Adding another preference
-            Preference aboutPreference = new Preference(requireContext());
-            aboutPreference.setKey("about_app");
-            aboutPreference.setTitle(getString(R.string.about_app_title));
-            aboutPreference.setSummary(getString(R.string.about_summary));
-
-            // Launch AboutActivity when clicked
-            aboutPreference.setOnPreferenceClickListener(preference -> {
-                Intent intent = new Intent(requireContext(), AboutActivity.class);
-                startActivity(intent);
-                return true;
-            });
-            preferenceScreen.addPreference(aboutPreference);
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
+    }
 
-        private void updateLanguage(String languageCode) {
-            // Save the selected language
-            SharedPreferences.Editor editor = requireContext().getSharedPreferences("WeSafePrefs", Context.MODE_PRIVATE).edit();
-            editor.putString("app_language", languageCode);
+    private void setupUI() {
+        // Profile card click listener
+        MaterialCardView profileCard = findViewById(R.id.card_profile);
+        profileCard.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+        });
+
+        // Language card click listener
+        MaterialCardView languageCard = findViewById(R.id.card_language);
+        languageCard.setOnClickListener(v -> {
+            showLanguageDialog();
+        });
+
+        // Theme card click listener
+        MaterialCardView themeCard = findViewById(R.id.card_theme);
+        themeCard.setOnClickListener(v -> {
+            showThemeDialog();
+        });
+
+        // Notification switch
+        notificationSwitch = findViewById(R.id.switch_notifications);
+        boolean notificationsEnabled = prefs.getBoolean("notifications_new_message", true);
+        notificationSwitch.setChecked(notificationsEnabled);
+        notificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("notifications_new_message", isChecked);
             editor.apply();
+        });
 
-            // Update current activity's language
-            Locale locale;
-            if (languageCode.equals("default")) {
-                locale = Resources.getSystem().getConfiguration().getLocales().get(0);
-            } else {
-                locale = new Locale.Builder().setLanguage(languageCode).build();
-            }
-            
-            Locale.setDefault(locale);
-            Resources resources = requireContext().getResources();
-            Configuration config = new Configuration(resources.getConfiguration());
-            config.setLocale(locale);
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
-            
-            // Restart all activities to apply the new language
-            Intent intent = requireContext().getPackageManager().getLaunchIntentForPackage(requireContext().getPackageName());
-            if (intent != null) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        // About card click listener
+        MaterialCardView aboutCard = findViewById(R.id.card_about);
+        aboutCard.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
+        });
+        
+        // Developer card click listener
+        MaterialCardView developerCard = findViewById(R.id.card_developer);
+        developerCard.setOnClickListener(v -> showDeveloperOptions());
+    }
+
+    private void setupBottomNavigation() {
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
+        bottomNavigation.setSelectedItemId(R.id.nav_settings);
+        
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_maps) {
+                Intent intent = new Intent(this, MapActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                requireActivity().finish();
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_contact) {
+                Intent intent = new Intent(this, EmergencyContactsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_home) {
+                // Navigate back to main home screen
+                navigateBackToMain();
+                return true;
+            } else if (itemId == R.id.nav_report) {
+                Intent intent = new Intent(this, IncidentReportActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_settings) {
+                // Already in settings
+                return true;
             }
+            return false;
+        });
+    }
+
+    private void showLanguageDialog() {
+        String[] languages = {"English", "Bahasa Malaysia", "简体中文"};
+        String[] languageCodes = {"en", "ms", "zh-CN"};
+        
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.select_language_title));
+        
+        String currentLanguage = prefs.getString("app_language", "en");
+        int checkedItem = 0;
+        for (int i = 0; i < languageCodes.length; i++) {
+            if (languageCodes[i].equals(currentLanguage)) {
+                checkedItem = i;
+                break;
+            }
+        }
+        
+        builder.setSingleChoiceItems(languages, checkedItem, (dialog, which) -> {
+            String selectedLanguage = languageCodes[which];
+            updateLanguage(selectedLanguage);
+            dialog.dismiss();
+        });
+        
+        builder.setNegativeButton(getString(R.string.cancel), null);
+        builder.show();
+    }
+
+    private void showThemeDialog() {
+        String[] themeNames = getResources().getStringArray(R.array.theme_names);
+        String[] themeValues = getResources().getStringArray(R.array.theme_values);
+        
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.select_theme));
+        
+        ThemeManager themeManager = ThemeManager.getInstance(this);
+        String currentTheme = themeManager.getCurrentTheme();
+        int checkedItem = 0;
+        for (int i = 0; i < themeValues.length; i++) {
+            if (themeValues[i].equals(currentTheme)) {
+                checkedItem = i;
+                break;
+            }
+        }
+        
+        builder.setSingleChoiceItems(themeNames, checkedItem, (dialog, which) -> {
+            String selectedTheme = themeValues[which];
+            themeManager.setTheme(selectedTheme);
+            dialog.dismiss();
+            
+            // Recreate activity to apply new theme
+            recreate();
+        });
+        
+        builder.setNegativeButton(getString(R.string.cancel), null);
+        builder.show();
+    }
+    
+    /**
+     * Show developer options dialog
+     */
+    private void showDeveloperOptions() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.developer_title))
+                .setItems(new String[]{getString(R.string.reset_first_time_setup)}, (dialog, which) -> {
+                    if (which == 0) {
+                        // Reset first-time setup
+                        FirstTimeSetupManager setupManager = FirstTimeSetupManager.getInstance(this);
+                        setupManager.resetFirstTimeSetup();
+                        
+                        new AlertDialog.Builder(this)
+                                .setTitle(getString(R.string.reset_successful))
+                                .setMessage(getString(R.string.reset_first_time_setup_message))
+                                .setPositiveButton(getString(R.string.ok), null)
+                                .show();
+                    }
+                })
+                .setNegativeButton(getString(android.R.string.cancel), null)
+                .show();
+    }
+
+    private void navigateBackToMain() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
+    }
+
+    private void updateLanguage(String languageCode) {
+        // Save the selected language
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("app_language", languageCode);
+        editor.apply();
+
+        // Update current activity's language
+        Locale locale;
+        if (languageCode.equals("default")) {
+            locale = Resources.getSystem().getConfiguration().getLocales().get(0);
+        } else if (languageCode.equals("zh-CN")) {
+            // Handle Chinese Simplified properly
+            locale = Locale.SIMPLIFIED_CHINESE;
+        } else {
+            locale = new Locale.Builder().setLanguage(languageCode).build();
+        }
+        
+        Locale.setDefault(locale);
+        Resources resources = getResources();
+        Configuration config = new Configuration(resources.getConfiguration());
+        config.setLocale(locale);
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
+        
+        // Restart all activities to apply the new language
+        Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
+        if (intent != null) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
         }
     }
 
@@ -135,7 +256,12 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        navigateBackToMain();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        navigateBackToMain();
     }
 }

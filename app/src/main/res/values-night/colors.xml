@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark theme colors -->
+    <color name="colorPrimary">@color/dark_primary</color>
+    <color name="colorPrimaryDark">@color/purple_700</color>
+    <color name="colorBackground">@color/dark_background</color>
+    <color name="colorSurface">@color/dark_surface</color>
+    <color name="colorOnPrimary">@color/black</color>
+    <color name="colorOnBackground">@color/white</color>
+    <color name="colorOnSurface">@color/white</color>
+</resources>

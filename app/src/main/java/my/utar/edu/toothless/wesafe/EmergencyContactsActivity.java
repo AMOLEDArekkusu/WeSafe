@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ public class EmergencyContactsActivity extends BaseActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private static final int BACKGROUND_LOCATION_PERMISSION_REQUEST_CODE = 1002;
+    private static final int EDIT_CONTACT_REQUEST_CODE = 2001;
     
     private RecyclerView rvContacts;
     private View emptyView;
@@ -54,11 +57,13 @@ public class EmergencyContactsActivity extends BaseActivity {
         setContentView(R.layout.activity_emergency_contacts);
 
         setSupportActionBar(findViewById(R.id.toolbar));
+        // Remove back arrow - users can use bottom navigation
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
         contactStorage = new ContactStorage(this);
+        
         initializeViews();
         setupRecyclerView();
         loadContacts();
@@ -66,8 +71,70 @@ public class EmergencyContactsActivity extends BaseActivity {
         
         // Initialize location services
         initializeLocationServices();
-        // Check and request permissions
-        checkAndRequestLocationPermissions();
+        
+        // Setup bottom navigation
+        setupBottomNavigation();
+        
+        // Show first-time setup dialog if needed
+        showFirstTimeSetupDialog();
+    }
+
+    private void setupBottomNavigation() {
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
+        bottomNavigation.setSelectedItemId(R.id.nav_contact); // Set contact as selected
+
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_maps) {
+                startActivity(new Intent(this, MapActivity.class));
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_contact) {
+                // Already in contacts, do nothing
+                return true;
+            } else if (itemId == R.id.nav_report) {
+                startActivity(new Intent(this, IncidentReportActivity.class));
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_settings) {
+                startActivity(new Intent(this, SettingsActivity.class));
+                finish();
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private void showFirstTimeSetupDialog() {
+        // Check if it's the first time opening the contacts
+        android.content.SharedPreferences prefs = getSharedPreferences("EmergencyContacts", MODE_PRIVATE);
+        boolean isFirstTime = prefs.getBoolean("isFirstTime", true);
+        
+        if (isFirstTime) {
+            new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.first_time_setup_title))
+                .setMessage(getString(R.string.first_time_setup_message))
+                .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                    // Mark as not first time
+                    prefs.edit().putBoolean("isFirstTime", false).apply();
+                    // Check and request permissions after user acknowledges
+                    checkAndRequestLocationPermissions();
+                })
+                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                    prefs.edit().putBoolean("isFirstTime", false).apply();
+                    dialog.dismiss();
+                })
+                .setCancelable(false)
+                .create()
+                .show();
+        } else {
+            // Check and request permissions
+            checkAndRequestLocationPermissions();
+        }
     }
 
     private void initializeViews() {
@@ -101,79 +168,106 @@ public class EmergencyContactsActivity extends BaseActivity {
 
     private void setupClickListeners() {
         fabAddContact.setOnClickListener(v -> {
-            Intent intent = new Intent(EmergencyContactsActivity.this, EditEmergencyContactActivity.class);
-            startActivityForResult(intent, 1); // Use the same request code (1)
+            try {
+                Intent intent = new Intent(EmergencyContactsActivity.this, EditEmergencyContactActivity.class);
+                android.util.Log.d("EmergencyContacts", "Starting EditEmergencyContactActivity");
+                startActivityForResult(intent, EDIT_CONTACT_REQUEST_CODE);
+                android.util.Log.d("EmergencyContacts", "StartActivityForResult called");
+            } catch (Exception e) {
+                e.printStackTrace();
+                android.util.Log.e("EmergencyContacts", "Error opening contact form", e);
+                Toast.makeText(this, "Error opening contact form: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     // Method to handle contact deletion
     public void deleteContact(int position) {
-        contactList.remove(position);
-        contactStorage.deleteContact(position);
-        adapter.notifyItemRemoved(position);
-        updateEmptyView();
+        try {
+            if (position >= 0 && position < contactList.size()) {
+                // Remove from storage first
+                contactStorage.deleteContact(position);
+                // Reload all contacts to ensure consistency
+                loadContacts();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error deleting contact. Please try again.", Toast.LENGTH_SHORT).show();
+            // Reload contacts in case of error
+            loadContacts();
+        }
     }
 
     // Method to handle contact editing
     public void editContact(int position) {
-        EmergencyContact contact = contactList.get(position);
-        Intent intent = new Intent(this, EditEmergencyContactActivity.class);
-        intent.putExtra("contact", contact);
-        intent.putExtra("position", position);
-        startActivityForResult(intent, 1); // Use the same request code (1)
+        try {
+            if (position >= 0 && position < contactList.size()) {
+                EmergencyContact contact = contactList.get(position);
+                Intent intent = new Intent(this, EditEmergencyContactActivity.class);
+                intent.putExtra("contact", contact);
+                intent.putExtra("position", position);
+                startActivityForResult(intent, EDIT_CONTACT_REQUEST_CODE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error opening contact editor", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         
-        // Load contacts from storage whether the edit was successful or canceled
-        if (requestCode == 1) {
-            // Refresh contacts from storage
-            loadContacts();
-        }
+        android.util.Log.d("EmergencyContacts", "onActivityResult called - requestCode: " + requestCode + ", resultCode: " + resultCode);
         
-        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
-            boolean isEdit = data.getBooleanExtra("isEdit", false);
-
-            if (isEdit) {
-                // Handle editing an existing contact
-                int position = data.getIntExtra("position", -1);
-                EmergencyContact updatedContact = data.getParcelableExtra("contact");
-
-                if (position != -1 && updatedContact != null) {
-                    contactList.set(position, updatedContact);
-                    contactStorage.updateContact(position, updatedContact);
-                    adapter.notifyItemChanged(position);
+        if (requestCode == EDIT_CONTACT_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            try {
+                boolean isDelete = data.getBooleanExtra("isDelete", false);
+                
+                if (isDelete) {
+                    // Handle deleting contact
+                    int position = data.getIntExtra("position", -1);
+                    android.util.Log.d("EmergencyContacts", "Deleting contact at position: " + position);
+                    if (position >= 0) {
+                        contactStorage.deleteContact(position);
+                        Toast.makeText(this, getString(R.string.contact_deleted), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    EmergencyContact contact = data.getParcelableExtra("contact");
+                    boolean isEdit = data.getBooleanExtra("isEdit", false);
+                    
+                    android.util.Log.d("EmergencyContacts", "Contact received: " + (contact != null ? contact.getName() : "null") + ", isEdit: " + isEdit);
+                    
+                    if (contact != null) {
+                        if (isEdit) {
+                            // Handle editing existing contact
+                            int position = data.getIntExtra("position", -1);
+                            android.util.Log.d("EmergencyContacts", "Updating contact at position: " + position);
+                            if (position >= 0) {
+                                contactStorage.updateContact(position, contact);
+                                Toast.makeText(this, "Contact updated successfully", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            // Handle adding new contact
+                            android.util.Log.d("EmergencyContacts", "Adding new contact");
+                            contactStorage.addContact(contact);
+                            Toast.makeText(this, "Contact added successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
-            } else {
-                // Handle adding a new contact
-                EmergencyContact newContact = data.getParcelableExtra("contact");
-                if (newContact != null) {
-                    contactList.add(newContact);
-                    contactStorage.addContact(newContact);
-                    adapter.notifyItemInserted(contactList.size() - 1);
-                    updateEmptyView();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                android.util.Log.e("EmergencyContacts", "Error processing contact", e);
+                Toast.makeText(this, "Error processing contact", Toast.LENGTH_SHORT).show();
             }
         }
+        
+        // Always reload contacts to reflect changes
+        android.util.Log.d("EmergencyContacts", "Reloading contacts");
+        loadContacts();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(android.view.MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            // Handle the back button click
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
+    // Back navigation removed - users can use bottom navigation
 
     private void initializeLocationServices() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);

@@ -12,6 +12,7 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class AboutActivity extends BaseActivity {
 
@@ -25,8 +26,8 @@ public class AboutActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(R.string.about_app_title);
+            // Remove back arrow - users can use bottom navigation
         }
 
         // Set app version
@@ -62,6 +63,40 @@ public class AboutActivity extends BaseActivity {
         } else {
             contactInfo.setText(text);
         }
+
+        // Setup bottom navigation
+        setupBottomNavigation();
+    }
+
+    private void setupBottomNavigation() {
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
+        bottomNavigation.setSelectedItemId(R.id.nav_settings); // Set settings as selected since About is accessed from Settings
+
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_maps) {
+                startActivity(new Intent(this, MapActivity.class));
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_contact) {
+                startActivity(new Intent(this, EmergencyContactsActivity.class));
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_report) {
+                startActivity(new Intent(this, IncidentReportActivity.class));
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_settings) {
+                startActivity(new Intent(this, SettingsActivity.class));
+                finish();
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
@@ -70,9 +105,5 @@ public class AboutActivity extends BaseActivity {
         hideStatusBar();
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
+    // Back navigation removed - users can use bottom navigation
 }

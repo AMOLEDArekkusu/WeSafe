@@ -28,11 +28,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MapActivity extends BaseActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private FloatingActionButton fabReportIncident, fabMyLocation;
+    private BottomNavigationView bottomNavigation;
     private SupportMapFragment mapFragment;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
@@ -49,19 +51,19 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
         setContentView(R.layout.activity_map);
 
         setSupportActionBar(findViewById(R.id.toolbar));
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        // Remove back arrow - no longer needed with bottom navigation
 
         initializeViews();
         setupLocationServices();
         setupMap();
         setupClickListeners();
+        setupBottomNavigation();
     }
 
     private void initializeViews() {
         fabReportIncident = findViewById(R.id.fab_report_incident);
         fabMyLocation = findViewById(R.id.fab_my_location);
+        bottomNavigation = findViewById(R.id.bottom_navigation);
     }
 
     private void setupMap() {
@@ -83,7 +85,17 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
                 if (locationResult == null) {
                     return;
                 }
-                currentLocation = locationResult.getLastLocation();
+                Location newLocation = locationResult.getLastLocation();
+                if (newLocation != null) {
+                    boolean isFirstLocation = (currentLocation == null);
+                    currentLocation = newLocation;
+                    
+                    // Move camera to current location if this is the first location update
+                    // and the map is ready
+                    if (isFirstLocation && mMap != null) {
+                        moveToCurrentLocation();
+                    }
+                }
             }
         };
         requestLocationUpdates();
@@ -113,6 +125,34 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
         });
     }
 
+    private void setupBottomNavigation() {
+        bottomNavigation.setSelectedItemId(R.id.nav_maps);
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                startActivity(new Intent(MapActivity.this, MainActivity.class));
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_contact) {
+                startActivity(new Intent(MapActivity.this, EmergencyContactsActivity.class));
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_maps) {
+                // Already on maps activity
+                return true;
+            } else if (itemId == R.id.nav_report) {
+                startActivity(new Intent(MapActivity.this, IncidentReportActivity.class));
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_settings) {
+                startActivity(new Intent(MapActivity.this, SettingsActivity.class));
+                finish();
+                return true;
+            }
+            return false;
+        });
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -125,9 +165,12 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
         // Enable the my-location layer if permission is granted
         enableMyLocation();
         
-        // Add padding to prevent controls from overlapping with FABs
-        // Left padding for zoom controls, bottom padding for FABs
-        mMap.setPadding(16, 0, 160, 250);
+        // Try to get current location immediately
+        getCurrentLocation();
+        
+        // Add padding to prevent controls from overlapping with FABs and bottom navigation
+        // Left padding for zoom controls, bottom padding for bottom navigation and FABs
+        mMap.setPadding(16, 0, 160, 320);
         
         // Move zoom controls to bottom-left
         if (mapFragment != null && mapFragment.getView() != null) {
@@ -147,8 +190,8 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
                 .title(getString(R.string.sample_incident))
                 .snippet(getString(R.string.incident_description, "30 mins")));
 
-        // Move camera to the sample location
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sampleIncident, 12));
+        // Move camera to current location if available, otherwise use sample location
+        moveToCurrentLocation();
 
         // Set marker click listener
         mMap.setOnMarkerClickListener(marker -> {
@@ -168,11 +211,58 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
         dialog.show(getSupportFragmentManager(), "IncidentDetailDialog");
     }
 
+    private void moveToCurrentLocation() {
+        if (mMap == null) {
+            return;
+        }
+        
+        if (currentLocation != null) {
+            // Move camera to current location
+            LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+        } else {
+            // Try to get last known location
+            getCurrentLocation();
+        }
+    }
+
+    private void getCurrentLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) 
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, location -> {
+                    if (location != null) {
+                        currentLocation = location;
+                        if (mMap != null) {
+                            LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+                        }
+                    } else {
+                        // If no last known location, use sample location as fallback
+                        LatLng sampleLocation = new LatLng(37.7749, -122.4194);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sampleLocation, 12));
+                    }
+                })
+                .addOnFailureListener(this, e -> {
+                    // If location retrieval fails, use sample location as fallback
+                    LatLng sampleLocation = new LatLng(37.7749, -122.4194);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sampleLocation, 12));
+                });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         hideStatusBar(); // Re-hide status bar when activity resumes
         requestLocationUpdates(); // Request location updates when activity resumes
+        
+        // Move to current location if map is ready
+        if (mMap != null) {
+            getCurrentLocation();
+        }
     }
 
     @Override
@@ -195,12 +285,6 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback {
                 // The image URI is in: data.getData()
             }
         }
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     private static final int REQUEST_CAMERA_PERMISSION = 100;

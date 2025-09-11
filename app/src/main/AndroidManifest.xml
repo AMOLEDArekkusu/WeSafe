@@ -18,6 +18,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
+        android:name=".WeSafeApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -46,26 +47,37 @@
         <activity 
             android:name=".EditEmergencyContactActivity"
             android:theme="@style/Theme.WeSafe"
+            android:parentActivityName=".EmergencyContactsActivity"
             android:exported="false" />
         <activity 
             android:name=".EmergencyContactsActivity"
             android:theme="@style/Theme.WeSafe"
+            android:parentActivityName=".MainActivity"
             android:exported="false" />
         <activity 
             android:name=".IncidentReportActivity"
             android:theme="@style/Theme.WeSafe"
+            android:parentActivityName=".MainActivity"
             android:exported="false" />
         <activity 
             android:name=".MapActivity"
             android:theme="@style/Theme.WeSafe"
+            android:parentActivityName=".MainActivity"
             android:exported="false" />
         <activity 
             android:name=".SettingsActivity"
             android:theme="@style/Theme.WeSafe"
+            android:parentActivityName=".MainActivity"
+            android:exported="false" />
+        <activity 
+            android:name=".ProfileActivity"
+            android:theme="@style/Theme.WeSafe"
+            android:parentActivityName=".SettingsActivity"
             android:exported="false" />
         <activity 
             android:name=".AboutActivity"
             android:theme="@style/Theme.WeSafe"
+            android:parentActivityName=".SettingsActivity"
             android:exported="false" />
 
         <!-- FileProvider for camera functionality -->

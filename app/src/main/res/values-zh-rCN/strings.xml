@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WeSafe</string>
+    <string name="emergency_contacts">紧急联系人</string>
+    
+    <!-- Main Screen -->
+    <string name="welcome_message">欢迎使用 WeSafe</string>
+    <string name="current_status">当前状态</string>
+    <string name="your_safety_dashboard">您的安全仪表板</string>
+    <string name="getting_location">📍 正在获取位置...</string>
+    <string name="loading_weather">🌤️ 正在加载天气...</string>
+    <string name="loading_incidents">📊 正在加载事件...</string>
+    <string name="last_updated">最后更新: %s</string>
+    <string name="quick_actions">快速操作</string>
+    <string name="safety_tips">安全提示</string>
+    
+    <!-- Emergency Alert -->
+    <string name="emergency_alert_title">紧急警报</string>
+    <string name="emergency_alert_subtitle">点击发送紧急警报</string>
+    
+    <!-- Main Activity UI -->
+    <string name="location_title">位置</string>
+    <string name="safety_check_title">安全检查</string>
+    <string name="safety_status_title">安全状态</string>
+    <string name="location_status">位置</string>
+    <string name="contacts_title">联系人</string>
+    <string name="updated_title">已更新</string>
+    <string name="weather_conditions_title">天气状况</string>
+    <string name="condition_title">状况</string>
+    <string name="humidity_title">湿度</string>
+    <string name="wind_title">风速</string>
+    <string name="location_needed_for_weather">需要位置信息获取天气 • 点击重试</string>
+    <string name="configure_safety_preferences">配置您的安全偏好</string>
+    <string name="tap_to_refresh_weather">点击刷新天气数据</string>
+    
+    <!-- Navigation -->
+    <string name="nav_maps">地图</string>
+    <string name="nav_contact">联系人</string>
+    <string name="nav_home">主页</string>
+    <string name="nav_report">报告</string>
+    <string name="nav_settings">设置</string>
+    
+    <!-- Settings Activity -->
+    <string name="settings_title">设置</string>
+    <string name="settings_subtitle">自定义您的安全体验</string>
+    <string name="profile_title">个人资料</string>
+    <string name="profile_subtitle">管理您的个人信息</string>
+    <string name="language_title">语言</string>
+    <string name="language_subtitle">更改应用语言</string>
+    <string name="theme_title">主题</string>
+    <string name="theme_subtitle">选择您偏好的外观</string>
+    <string name="notifications_title">启用通知</string>
+    <string name="notifications_subtitle">接收安全警报和通知</string>
+    <string name="about_title">关于应用</string>
+    <string name="about_subtitle">查看应用版本和详情</string>
+
+    <!-- First Time Setup -->
+    <string name="first_time_welcome">欢迎使用 WeSafe！</string>
+    <string name="first_time_setup">首次设置</string>
+    <string name="background_location_title">需要后台位置访问权限</string>
+    <string name="background_location_message">应用需要后台位置访问权限，以便在应用关闭时也能通知紧急联系人您的位置。</string>
+    <string name="grant_permission">确定</string>
+    <string name="not_now">取消</string>
+    
+    <!-- Developer section -->
+    <string name="developer_title">开发者选项</string>
+    <string name="developer_subtitle">测试和调试工具</string>
+    <string name="reset_first_time_setup">重置首次设置</string>
+    <string name="reset_first_time_setup_message">这将重置首次设置，以便您可以再次测试后台位置权限对话框。</string>
+    <string name="reset_successful">首次设置已重置</string>
+    
+    <!-- Theme Options -->
+    <string name="theme_system">系统默认</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+    
+    <!-- Additional Common Strings -->
+    <string name="emergency_title">紧急警报</string>
+    <string name="emergency_message">您确定要触发紧急警报吗？这将通知您的紧急联系人并分享您的位置。</string>
+    <string name="yes_alert">是的，警报联系人</string>
+    <string name="cancel">取消</string>
+    <string name="location_required">需要位置权限</string>
+    <string name="location_message">发送紧急位置信息需要位置权限。请启用位置权限以使用此功能。</string>
+    <string name="enable">启用</string>
+    <string name="ok">确定</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    
+    <!-- Settings and Profile -->
+    <string name="settings">设置</string>
+    <string name="language">语言</string>
+    <string name="notifications">通知</string>
+    <string name="enable_notifications">启用通知</string>
+    <string name="notification_summary">接收安全警报和通知</string>
+    <string name="about_app">关于应用</string>
+    <string name="about_summary">查看应用版本和详情</string>
+    <string name="about_app_title">关于应用程序</string>
+    <string name="about_app_description">WeSafe 是一个全面的安全和紧急响应应用程序，旨在帮助您保持安全并与紧急联系人保持联系。</string>
+    <string name="key_features">主要功能：</string>
+    <string name="features_list">• 快速紧急警报\n• 位置追踪\n• 紧急联系人管理\n• 事件报告\n• 多语言支持\n• 实时天气更新\n• 安全提示和指导</string>
+    <string name="contact_info">GitHub 仓库：\nhttps://github.com/AMOLEDArekkusu/WeSafe</string>
+    <string name="copyright">© 2025 WeSafe. 版权所有。</string>
+    <string name="version">版本</string>
+    <string name="profile">个人资料</string>
+    
+    <!-- Theme Settings -->
+    <string name="theme">主题</string>
+    <string name="theme_summary">选择应用外观</string>
+    <string name="select_theme">选择主题</string>
+    
+    <!-- Error Messages -->
+    <string name="error_location">获取位置时出错</string>
+    <string name="location_unavailable">位置不可用</string>
+    <string name="error_weather">无法获取天气数据</string>
+    <string name="unknown_condition">未知</string>
+    
+    <!-- Dynamic Weather Updates -->
+    <string name="updating_weather_data">正在更新天气数据...</string>
+    <string name="weather_loading">☁️ 正在加载...</string>
+    <string name="updated_just_now">刚刚更新 • 点击刷新</string>
+    <string name="last_updated_prefix">最后更新: %s</string>
+    <string name="location_prefix">📍 %s</string>
+    <string name="unknown_weather_condition">🌡️ 未知</string>
+    
+    <!-- Location Status Messages -->
+    <string name="location_unavailable_status">📍 位置不可用</string>
+    <string name="error_getting_location_status">📍 获取位置时出错</string>
+    
+    <!-- Incident Report -->
+    <string name="incident_title">事件标题 *</string>
+    <string name="incident_description_hint">描述 *</string>
+    <string name="location_address">位置/地址 *</string>
+    <string name="incident_type">事件类型 *</string>
+    <string name="severity_level">严重程度 *</string>
+    <string name="add_photos">添加照片（可选）</string>
+    <string name="take_photo">拍照</string>
+    <string name="gallery">相册</string>
+    <string name="submit_report">提交报告</string>
+    
+    <!-- Validation Messages -->
+    <string name="error_title_required">标题是必填项</string>
+    <string name="error_description_required">描述是必填项</string>
+    <string name="error_location_required">位置是必填项</string>
+    <string name="error_incident_type_required">请选择事件类型</string>
+    <string name="error_severity_required">请选择严重程度</string>
+    <string name="success_incident_submitted">事件报告提交成功</string>
+    <string name="incident_description">交通事故报告 %s 前</string>
+    <string name="incident_reported">事件报告成功</string>
+    <string name="photo_captured">照片拍摄成功</string>
+    <string name="image_selected">图片选择成功</string>
+    <string name="camera_permission_denied">相机权限被拒绝</string>
+    <string name="location_permission_denied">位置权限被拒绝</string>
+    
+    <!-- Permission Dialog Strings -->
+    <string name="location_permission_needed">需要位置权限</string>
+    <string name="location_permission_rationale">此应用需要位置权限以确保您的安全，并向您的紧急联系人提供准确的位置信息。</string>
+    <string name="background_location_needed">需要后台位置访问权限</string>
+    <string name="background_location_rationale">此应用需要后台位置访问权限，以便在应用关闭时也能通知您的紧急联系人您的位置。</string>
+    
+    <!-- First Time Setup -->
+    <string name="first_time_setup_title">欢迎使用紧急联系人</string>
+    <string name="first_time_setup_message">添加可信任的联系人，他们将在紧急情况下收到通知。我们需要位置权限来保护您的安全并保持联系。</string>
+    
+    <!-- No Contacts -->
+    <string name="no_contacts">尚未添加紧急联系人</string>
+    <string name="no_contacts_description">添加紧急联系人以在您需要帮助时接收警报和通知。</string>
+    
+    <!-- Delete Contact -->
+    <string name="delete_contact">删除联系人</string>
+    <string name="delete_contact_title">删除联系人</string>
+    <string name="delete_contact_message">您确定要删除此紧急联系人吗？此操作无法撤销。</string>
+    <string name="delete">删除</string>
+    <string name="contact_deleted">联系人删除成功</string>
+    
+    <!-- Contact Form Strings -->
+    <string name="contact_name">姓名</string>
+    <string name="contact_phone">电话号码</string>
+    <string name="contact_email">邮箱（可选）</string>
+    <string name="contact_type">联系人类型</string>
+    <string name="primary_contact">主要联系人</string>
+    <string name="receive_alerts">接收警报</string>
+    <string name="receive_location">接收位置更新</string>
+    <string name="primary_contact_desc">此联系人将在紧急情况下优先联系</string>
+    <string name="receive_alerts_desc">在紧急情况下接收短信警报</string>
+    <string name="receive_location_desc">接收定期位置更新</string>
+    <!-- EditEmergencyContact validation -->
+    <string name="name_required">姓名为必填项</string>
+    <string name="phone_required">电话号码为必填项</string>
+    <string name="edit_emergency_contact_title">编辑紧急联系人</string>
+    <string name="profile_saved_successfully">个人资料保存成功</string>
+    <string name="personal_information">个人信息</string>
+    <string name="contact_information">联系信息</string>
+    <string name="emergency_contacts_description">紧急情况下联系的人员</string>
+    <string name="add_emergency_contact">添加紧急联系人</string>
+    <string name="save_changes">保存更改</string>
+    <string name="full_name">姓名</string>
+    <string name="phone_number">电话号码</string>
+    <string name="email">邮箱</string>
+    
+    <!-- Error messages -->
+    <string name="error_loading_app">加载应用时出错：%s</string>
+    <string name="emergency_button_clicked">紧急按钮已点击！</string>
+    
+    <!-- Language Selection -->
+    <string name="select_language_title">选择语言</string>
+    
+    <!-- Unsaved changes dialog -->
+    <string name="unsaved_changes_title">未保存的更改</string>
+    <string name="unsaved_changes_message">您有未保存的更改。确定要放弃它们吗？</string>
+    <string name="discard">放弃</string>
+    <string name="keep_editing">继续编辑</string>
+
+</resources>

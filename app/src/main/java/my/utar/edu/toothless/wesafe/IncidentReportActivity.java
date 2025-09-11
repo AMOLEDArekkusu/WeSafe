@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
@@ -70,9 +71,7 @@ public class IncidentReportActivity extends BaseActivity {
         setContentView(R.layout.activity_incident_report);
 
         setSupportActionBar(findViewById(R.id.toolbar));
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        // Remove back arrow - user must complete form or use bottom navigation
 
         initializeViews();
         setupSpinners();
@@ -86,6 +85,9 @@ public class IncidentReportActivity extends BaseActivity {
         // Initialize location services
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         getCurrentLocation();
+        
+        // Setup bottom navigation
+        setupBottomNavigation();
     }
 
     private void initializeViews() {
@@ -295,7 +297,7 @@ public class IncidentReportActivity extends BaseActivity {
         incidentStorage.incrementIncidentCount();
 
         // Show success message
-        Toast.makeText(this, "Incident report submitted successfully", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.success_incident_submitted), Toast.LENGTH_SHORT).show();
 
         // Return to previous activity
         setResult(RESULT_OK);
@@ -306,31 +308,36 @@ public class IncidentReportActivity extends BaseActivity {
         boolean isValid = true;
 
         if (etTitle.getText().toString().trim().isEmpty()) {
-            etTitle.setError("Title is required");
+            etTitle.setError(getString(R.string.error_title_required));
             isValid = false;
         }
 
         if (etDescription.getText().toString().trim().isEmpty()) {
-            etDescription.setError("Description is required");
+            etDescription.setError(getString(R.string.error_description_required));
             isValid = false;
         }
 
         if (etAddress.getText().toString().trim().isEmpty()) {
-            etAddress.setError("Location is required");
+            etAddress.setError(getString(R.string.error_location_required));
+            isValid = false;
+        }
+
+        // Validate incident type spinner
+        if (spinnerType.getSelectedItemPosition() == 0) {
+            Toast.makeText(this, getString(R.string.error_incident_type_required), Toast.LENGTH_SHORT).show();
+            isValid = false;
+        }
+
+        // Validate severity spinner
+        if (spinnerSeverity.getSelectedItemPosition() == 0) {
+            Toast.makeText(this, getString(R.string.error_severity_required), Toast.LENGTH_SHORT).show();
             isValid = false;
         }
 
         return isValid;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+    // Back arrow removed - users must complete form or use bottom navigation
 
     private void checkAndRequestPermissions() {
         List<String> permissions = new ArrayList<>();
@@ -474,5 +481,45 @@ public class IncidentReportActivity extends BaseActivity {
                 }
             }
         }
+    }
+    
+    private void setupBottomNavigation() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.nav_report);
+        
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            
+            if (itemId == R.id.nav_maps) {
+                Intent intent = new Intent(this, MapActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_contact) {
+                Intent intent = new Intent(this, EmergencyContactsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_home) {
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_report) {
+                // Already on report activity
+                return true;
+            } else if (itemId == R.id.nav_settings) {
+                Intent intent = new Intent(this, SettingsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                finish();
+                return true;
+            }
+            
+            return false;
+        });
     }
 }
