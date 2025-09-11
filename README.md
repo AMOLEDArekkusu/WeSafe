@@ -47,8 +47,9 @@ Huawei AppGallary and Google Play Store Will Comming Soon.......
     src="https://github.com/user-attachments/assets/9a41845f-db73-40f0-8e99-a4dbf3d7c5ce"
   />
   
-</a  <img width="400" height="120" alt="get-it-on-google-play-badge-seeklogo" src="https://github.com/user-attachments/assets/ba93b018-0b7d-496c-8587-aec569c2e023" />
-
+</a><a href="#> 
+<img width="400" height="120" alt="get-it-on-google-play-badge-seeklogo" src="https://github.com/user-attachments/assets/ba93b018-0b7d-496c-8587-aec569c2e023" />
+</a>
 
 ## Activities
 
