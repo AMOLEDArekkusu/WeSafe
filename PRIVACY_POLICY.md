@@ -161,7 +161,7 @@ Depending on your location, you may have the following rights:
 - Control emergency alert settings
 - Manage contact preferences
 
-To exercise your rights, contact us at [your-email@domain.com] or through the app settings.
+To exercise your rights, contact us at [gtryap10124@gmail.com] or through the app settings.
 
 ## Third-Party Services
 
