@@ -196,8 +196,7 @@ Your continued use of the App after changes become effective constitutes accepta
 
 If you have questions, concerns, or requests regarding this Privacy Policy or our privacy practices, please contact us:
 
-**Email:** [your-email@domain.com]  
-**Address:** [Your Company Address]  
+**Email:** [gtryap10124@gmail.com]  
 **App Support:** Available through the WeSafe app settings
 
 ## Regional Privacy Rights
