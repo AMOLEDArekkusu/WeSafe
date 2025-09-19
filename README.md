@@ -35,7 +35,7 @@ The app requires the following permissions:
 1. Select the version of the app on the Release package 
 2. Download and install the APK file 
 
-**Now available on Huawei AppGallery **
+**Now available on Huawei AppGallery**
 
 <div style="display: flex; gap: 12px; align-items: center;">
   <a href="https://appgallery.huawei.com/app/C115272689">
@@ -47,7 +47,7 @@ The app requires the following permissions:
     />
   </a>
 
-** Google Play Store Will Coming Soon.......**
+**Google Play Store Will Coming Soon.......**
 
   <a href="#">
     <img
@@ -70,6 +70,7 @@ The app requires the following permissions:
 
 
 ./gradlew build
+
 
 
 
