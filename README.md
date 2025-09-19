@@ -69,7 +69,6 @@ The app requires the following permissions:
 - AboutActivity: App information
 
 
-./gradlew build
 
 
 
