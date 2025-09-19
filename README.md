@@ -32,10 +32,8 @@ The app requires the following permissions:
 
 ## Installation
 
-1. Clone the repository
-2. Open the project in Android Studio
-3. Configure your Google Maps API key in the manifest
-4. Build and run the application
+1. Select the version of the app on the Release package 
+2. Download and install the APK file 
 
 **Now available on Huawei AppGallery **
 
@@ -47,8 +45,10 @@ The app requires the following permissions:
       alt="Huawei_AppGallery_white_badge_EN"
       src="https://github.com/user-attachments/assets/9a41845f-db73-40f0-8e99-a4dbf3d7c5ce"
     />
-** Google Play Store Will Comming Soon.......**
   </a>
+
+** Google Play Store Will Coming Soon.......**
+
   <a href="#">
     <img
       width="400"
@@ -68,11 +68,8 @@ The app requires the following permissions:
 - SettingsActivity: App configuration
 - AboutActivity: App information
 
-## Build and Development
 
-This project uses Gradle as the build system. To build the project:
-
-```sh
 ./gradlew build
+
 
 
