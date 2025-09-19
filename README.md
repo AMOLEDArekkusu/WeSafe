@@ -37,16 +37,17 @@ The app requires the following permissions:
 3. Configure your Google Maps API key in the manifest
 4. Build and run the application
 
-Huawei AppGallary and Google Play Store Will Comming Soon.......
+**Now available on Huawei AppGallery **
 
 <div style="display: flex; gap: 12px; align-items: center;">
-  <a href="#">
+  <a href="https://appgallery.huawei.com/app/C115272689">
     <img
       width="400"
       height="120"
       alt="Huawei_AppGallery_white_badge_EN"
       src="https://github.com/user-attachments/assets/9a41845f-db73-40f0-8e99-a4dbf3d7c5ce"
     />
+** Google Play Store Will Comming Soon.......**
   </a>
   <a href="#">
     <img
@@ -73,4 +74,5 @@ This project uses Gradle as the build system. To build the project:
 
 ```sh
 ./gradlew build
+
 
